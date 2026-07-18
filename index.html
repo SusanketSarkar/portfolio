@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Susanket — geospatial AI researcher</title>
+<meta name="description" content="Susanket — geospatial AI researcher working on location embeddings, multimodal geospatial models, and LLM-assisted spatial pipelines.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' font-family='monospace' fill='%23a3d9c0'%3E*%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<div class="topbar">
+  <nav>
+    <a href="index.html" class="current">index</a>
+    <a href="blog/index.html">blog</a>
+  </nav>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light and dark theme">* light</button>
+</div>
+
+<main class="wrap">
+
+  <header class="hero">
+    <pre id="glyph" class="glyph" aria-hidden="true"></pre>
+    <h1>Susanket</h1>
+    <p class="tagline">geospatial AI researcher &middot; location embeddings &amp; multimodal spatial models</p>
+    <p class="status">currently at <b>Esri</b> &middot; location embeddings, multimodal GeoAI &amp; LLM-assisted spatial pipelines</p>
+  </header>
+
+  <section id="about">
+    <h2 class="section-label">about</h2>
+    <div class="prose">
+      <p>I work on how machines represent <em>where</em> something is. Most of my research sits at the intersection of geospatial data and representation learning &mdash; turning coordinates, satellite imagery, and demographic signals into embeddings that language and vision models can actually reason over.</p>
+      <p>At Esri, I'm building the Global Location Encoder, a dual-encoder model pairing DINOv2 and Terramind to learn representations for any point on the globe, benchmarked against models like GeoCLIP and SatCLIP. Alongside that: tooling that gets these models running inside ArcGIS Pro, and LLM-assisted pipelines that turn raw geospatial data into something queryable.</p>
+    </div>
+
+    <div class="callout">
+      <!-- EDIT ME: swap in a real call-to-action and your actual contact links. -->
+      <b>Interested in location encoding, multimodal GeoAI, or spatial representation learning?</b>
+      Reach out via <a class="link" href="mailto:you@example.com">email</a> or <a class="link" href="https://x.com/yourhandle" target="_blank" rel="noopener">X</a>.
+    </div>
+  </section>
+
+  <section id="work">
+    <h2 class="section-label">selected work</h2>
+
+    <div class="work-group">
+      <div class="work-group-head">
+        <span class="org">Esri</span>
+        <span class="role">Geospatial AI Researcher &middot; current</span>
+      </div>
+
+      <div class="work-item">
+        <div class="title">Global Location Encoder</div>
+        <div class="desc">Dual-encoder model (DINOv2 + Terramind) producing global-scale location embeddings from Sentinel-2 imagery, with weighted grid-based sampling and a relational loss. Benchmarked against GeoCLIP and SatCLIP.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="title">High-Resolution US Location Embeddings</div>
+        <div class="desc">A fine-grained location encoder tuned for the continental US, extending the global model to finer spatial resolution for downstream prediction tasks.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="title">Multimodal Demographic Model</div>
+        <div class="desc">Combines tabular, image, text, and coordinate signals through cross-attention fusion to predict demographic outcomes at the grid-cell level &mdash; outperforming Google's PDFM on downstream benchmarks.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="title">LLM-Assisted Caption Generation Pipeline</div>
+        <div class="desc">A two-stage LLM pipeline (running against Ollama / vLLM) that generates natural-language demographic captions for roughly 33,000 US ZIP codes from Census and ACS data.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2 class="section-label">projects</h2>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <h3>QueryEarth</h3>
+        <p>A DAG-based geospatial query pipeline built on multi-resolution vision embeddings, with an LLM router that converts natural-language queries into ordered pipeline steps.</p>
+        <div class="tags">python &middot; llm-routing &middot; geospatial</div>
+      </div>
+
+      <div class="project-card">
+        <h3>ArcGIS Pro DLPK Tools</h3>
+        <p>Deep learning package tools for ArcGIS Pro &mdash; a unified VLM encoder (OpenCLIP, auto-detecting image vs. text) and a SkyCLIP embeddings tool merging raster-function and classifier interfaces.</p>
+        <div class="tags">python &middot; openclip &middot; arcgis</div>
+      </div>
+
+      <div class="project-card">
+        <h3>autoresearch</h3>
+        <p>An autonomous architecture-search system: a local LLM iteratively edits a training script and evaluates spatial embeddings on downstream F1 across health, climate, FEMA, and SVI datasets via an untouched eval harness.</p>
+        <div class="tags">python &middot; optuna &middot; local-llm</div>
+      </div>
+
+      <div class="project-card">
+        <h3>eval_embeddings &amp; HPO repos</h3>
+        <p>An evaluation pipeline for spatial embeddings (R&sup2; scoring, k-fold cross-validation) alongside two HPO repos using Optuna NSGA-II to search autoencoder architectures for geospatial feature encoding.</p>
+        <div class="tags">pytorch &middot; optuna &middot; scikit-learn</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="elsewhere">
+    <h2 class="section-label">elsewhere</h2>
+    <!-- EDIT ME: point these at your real profiles / resume. -->
+    <div class="elsewhere-links">
+      <a class="link" href="blog/index.html">blog</a>
+      <a class="link" href="mailto:you@example.com">email</a>
+      <a class="link" href="https://x.com/yourhandle" target="_blank" rel="noopener">x</a>
+      <a class="link" href="https://github.com/yourhandle" target="_blank" rel="noopener">github</a>
+      <a class="link" href="https://linkedin.com/in/yourhandle" target="_blank" rel="noopener">linkedin</a>
+    </div>
+  </section>
+
+  <footer>&copy; 2026 susanket</footer>
+</main>
+
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/starfield.js"></script>
+<script src="assets/js/spinner.js"></script>
+</body>
+</html>

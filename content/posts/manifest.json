@@ -1,0 +1,12 @@
+{
+  "posts": [
+    {
+      "slug": "welcome",
+      "title": "Setting this up",
+      "date": "2026-07-18",
+      "excerpt": "How this blog works: a markdown file plus one JSON entry, no build step.",
+      "tags": ["meta"],
+      "published": true
+    }
+  ]
+}

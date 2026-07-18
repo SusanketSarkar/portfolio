@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="doc-title">loading&hellip; — Susanket</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' font-family='monospace' fill='%23a3d9c0'%3E*%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<div class="topbar">
+  <nav>
+    <a href="../index.html">index</a>
+    <a href="index.html" class="current">blog</a>
+  </nav>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light and dark theme">* light</button>
+</div>
+
+<main class="wrap">
+  <div class="post-header">
+    <a class="back" href="index.html">&larr; back to blog</a>
+    <div id="post-header-content">
+      <p class="loading">loading post&hellip;</p>
+    </div>
+  </div>
+
+  <article class="post-body" id="post-body"></article>
+
+  <div class="post-footer">
+    <a class="link" href="index.html">&larr; all posts</a>
+  </div>
+</main>
+
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/starfield.js"></script>
+<script src="../assets/js/marked.min.js"></script>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var slug = params.get("slug");
+  var headerEl = document.getElementById("post-header-content");
+  var bodyEl = document.getElementById("post-body");
+
+  function fmtDate(iso) {
+    var d = new Date(iso + "T00:00:00");
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  }
+
+  function readingTime(text) {
+    var words = text.trim().split(/\s+/).length;
+    return Math.max(1, Math.round(words / 220));
+  }
+
+  function fail(msg) {
+    headerEl.innerHTML = '<p class="loading">' + msg + "</p>";
+  }
+
+  if (!slug) {
+    fail("no post specified.");
+  } else {
+    fetch("../content/posts/manifest.json")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var meta = (data.posts || []).find(function (p) { return p.slug === slug; });
+        if (!meta) throw new Error("post not found");
+
+        return fetch("../content/posts/" + slug + ".md")
+          .then(function (r) {
+            if (!r.ok) throw new Error("markdown file missing for this post");
+            return r.text();
+          })
+          .then(function (md) {
+            document.getElementById("doc-title").textContent = meta.title + " — Susanket";
+            var tags = (meta.tags || []).join(" &middot; ");
+            headerEl.innerHTML =
+              "<h1>" + escapeHtml(meta.title) + "</h1>" +
+              '<p class="post-meta">' + fmtDate(meta.date) + " &middot; " + readingTime(md) + " min read" + (tags ? " &middot; " + tags : "") + "</p>";
+            bodyEl.innerHTML = marked.parse(md);
+          });
+      })
+      .catch(function (err) {
+        fail("couldn\u2019t load this post (" + escapeHtml(err.message) + "). If you just opened this file directly, run a local server \u2014 see the README.");
+      });
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+})();
+</script>
+</body>
+</html>
