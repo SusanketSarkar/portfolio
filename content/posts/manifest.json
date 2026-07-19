@@ -17,7 +17,7 @@
       "excerpt": "Here is how Kimi’s recent paper on Attention Residuals work, and what they have found in a nutshell.",
       "tags": ["explainer"],
       "published": true,
-      "headerImage": "/content/posts/attnres/header.jpeg",
+      "headerImage": "/portfolio/blob/main/content/posts/attnres/header.jpeg",
       "headerCaption": "Marius at Minturnae, by Jean Drouais"
     },
     {
@@ -27,7 +27,7 @@
       "excerpt": "A deep dive into the architecture.",
       "tags": ["explainer"],
       "published": true,
-      "headerImage": "portfolio/blob/main/content/posts/kimik3/header.jpeg",
+      "headerImage": "/portfolio/blob/main/content/posts/kimik3/header.jpeg",
       "headerCaption": "Marius at Minturnae, by Jean Drouais"
     }
   ]
