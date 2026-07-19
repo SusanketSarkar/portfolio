@@ -3,7 +3,7 @@ When Moonshot released Kimi K2.5, it had already crossed the trillion-parameter 
 
 Yet Kimi K3 delivers a surprisingly large jump in capability. Despite only a modest increase in scale relative to today’s largest MoE models, it closes much of the gap to frontier proprietary systems across reasoning, coding, and agentic tasks. The question isn’t *how did Moonshot build a bigger model?* It’s *how did they build a significantly better one?*
 
-![The large jump between kimi k2.5 and kimi k3 suggests they did something right.](/content/posts/kimik3/image1.png)
+![The large jump between kimi k2.5 and kimi k3 suggests they did something right.](/portfolio/content/posts/kimik3/image1.png)
 
 As MOE models grow deeper and sparser there are two things that begin to happen, 
 
@@ -71,7 +71,7 @@ $$
 
 This fine-grained control allows individual channels within the same head to behave completely differently.
 
-<img src="/content/posts/kimik3/kda.png" style="display: block; margin: 0 auto; width: 400px;">
+<img src="/portfolio/content/posts/kimik3/kda.png" style="display: block; margin: 0 auto; width: 400px;">
 <p></p>
 The mechanism of KDA depicted in a block diagram.
 
@@ -81,7 +81,7 @@ The gives us a recurrent attention mechanism that retains the linear-time comple
 
 We know about how MOE (mixture of expert) models replace a dense feedforward layer with a layer which comprises of multiple smaller feed-forward layer per token and then have a router delegate a token to a subset to active experts. In doing that the input x is also first put through a down-projection, reducving the dimensions of the input and aiding to faster computation. This ia also why the process is called **latent** moe. The latent x is later up-projected into its original dimensions.
 
-<img src="/content/posts/kimik3/moe.png" style="display: block; margin: 0 auto; width: 500px;">
+<img src="/portfolio/content/posts/kimik3/moe.png" style="display: block; margin: 0 auto; width: 500px;">
 <p></p>
 
 However, for K3 we face a unique challenge. The MOE is **sparse**. Lets look at the table below. Kimi K3 has the smallest layer sparsity ratio (around 1.8), compared to other moe models (and even its own previous version).
@@ -199,7 +199,7 @@ $h_l = h_{l-1} + f(h_{l-1})$
 
 which is depicted in this diagram.
 
-<img src="/content/posts/kimik3/ar1.png" style="display: block; margin: 0 auto; width: 300px;">
+<img src="/portfolio/content/posts/kimik3/ar1.png" style="display: block; margin: 0 auto; width: 300px;">
 <p></p>
 
 The shortcut allows gradients to flow through very deep networks, making modern LLMs possible. However, it also introduces a subtle limitation.
@@ -235,7 +235,7 @@ where $v_i$ are outputs from previous layers (or blocks), and $\alpha_{i\rightar
 
 Rather than passively carrying forward the entire history, a layer can selectively reach back to early representations when needed while largely ignoring irrelevant intermediate computations. In other words, residual connections become a **retrieval mechanism** instead of a fixed accumulation mechanism.
 
-<img src="/content/posts/kimik3/ar2.png" style="display: block; margin: 0 auto; width: 500px;">
+<img src="/portfolio/content/posts/kimik3/ar2.png" style="display: block; margin: 0 auto; width: 500px;">
 <p></p>
 
 Because storing every layer output would be prohibitively expensive, Kimi K3 uses **Block Attention Residuals**, grouping neighboring layers into a handful of blocks and attending over block summaries instead of every individual layer. This preserves most of the benefits while keeping both memory usage and inference overhead low.
@@ -249,7 +249,7 @@ So far I’ve talked about what an architechtural feat K3 was compared to other 
 
 Instead their workflow looked like this:
 
-<img src="/content/posts/kimik3/mxpf.png" style="display: block; margin: 0 auto; width: 300px;">
+<img src="/portfolio/content/posts/kimik3/mxpf.png" style="display: block; margin: 0 auto; width: 300px;">
 <p></p>
 
 The model is already trained in mixed precision and hence it does not require post-hoc quantisation to be deployed. 
@@ -259,12 +259,12 @@ The model is already trained in mixed precision and hence it does not require po
 
 Additionally, training a Mixture-of-Experts model isn’t just expensive because of the number of parameters. Every token needs to be routed to experts that often live on the **different GPUs that their experts live on**.
 
-<img src="/content/posts/kimik3/tokengpu.png" style="display: block; margin: 0 auto; width: 300px;">
+<img src="/portfolio/content/posts/kimik3/tokengpu.png" style="display: block; margin: 0 auto; width: 300px;">
 <p></p>
 
 Instead of relying on dynamic tensor shapes and frequent CPU synchronization to determine where tokens should go, Moonshot redesigned the routing pipeline around **static communication patterns** with **no host synchronization** during execution.
 
-<img src="/content/posts/kimik3/expertparallel.png" style="display: block; margin: 0 auto; width: 600px;">
+<img src="/portfolio/content/posts/kimik3/expertparallel.png" style="display: block; margin: 0 auto; width: 600px;">
 <p></p>
 
 Removing these synchronization points keeps GPUs busy instead of waiting for the CPU to coordinate communication. It doesn’t make the model smarter exactly, but it does help it waste less hardware.
@@ -282,7 +282,7 @@ All of the architechture changes mentioned above does work, yes, but like most o
 
 Arguably the best, and it ties with GPT Sol and Fable 5.
 
-![](/content/posts/kimik3/coding.png)
+![](/portfolio/content/posts/kimik3/coding.png)
 
  That being said I did read a lot of reddit posts complaining thats its token hungy (compared to Sol).
 
@@ -290,11 +290,11 @@ Arguably the best, and it ties with GPT Sol and Fable 5.
 
 This is where it is the best. 
 
-![](/content/posts/kimik3/agentic.png)
+![](/portfolio/content/posts/kimik3/agentic.png)
 
 That being said what is really impresive is its, cost per task chart. It is better than most but costs around the same as GPT Terra.
 
-<img src="/content/posts/kimik3/svc.png" style="display: block; margin: 0 auto; width: 500px;">
+<img src="/portfolio/content/posts/kimik3/svc.png" style="display: block; margin: 0 auto; width: 500px;">
 <p></p>
 
 ### Show, Dont tell
@@ -305,26 +305,26 @@ Rather than just looking at the benchmarks, here are some results that genuinely
     
     K3 wrote an MLA kernel that achieved **517.8 TFLOPS** (forward + backward) on an NVIDIA H200, over **50% of the theoretical BF16 peak throughput** of the hardware.
     
-    <img src="/content/posts/kimik3/mla.png" style="display: block; margin: 0 auto; width: 500px;">
+    <img src="/portfolio/content/posts/kimik3/mla.png" style="display: block; margin: 0 auto; width: 500px;">
 <p></p>
     
 2. It built an entire GPU compiler. K3 developed MiniTriton (its a lightweight Triton-like GPU compiler) from scartch.
     
     That meant building, a DSL frontend, an intermediate representation (IR), optimisation passes, runtime execution, and validating everything by training a real neural network.
     
-    <img src="/content/posts/kimik3/minitriton.png" style="display: block; margin: 0 auto; width: 500px;">
+    <img src="/portfolio/content/posts/kimik3/minitriton.png" style="display: block; margin: 0 auto; width: 500px;">
 <p></p>
     
 3. One thing I really like is their Vision in the loop idea. It is a simple workflow that means, instaed of generating code blindly it first writes code runs program, gets a screenshot, and see what it did wrong and modify the code accordingly.
     
-    <img src="/content/posts/kimik3/visionloop.png" style="display: block; margin: 0 auto; width: 500px;">
+    <img src="/portfolio/content/posts/kimik3/visionloop.png" style="display: block; margin: 0 auto; width: 500px;">
 <p></p>
     
 Not sure if any of the frontier models already do this but I think its really interesting.
     
 4. What blew my mind the most was a demo where K3 created a **3Blue1Brown-style animated explainer of the concept of quantile balancing, and its actually makes the concept pretty clear**. Heres the video, incase you’re interested.
 <video controls style="display: block; margin: 0 auto; width: 500px;">
-  <source src="/content/posts/kimik3/quantbal.mp4" type="video/mp4">
+  <source src="/portfolio/content/posts/kimik3/quantbal.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
