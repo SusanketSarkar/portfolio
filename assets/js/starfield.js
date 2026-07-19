@@ -27,20 +27,23 @@
     count = Math.max(60, Math.min(count, 220));
     stars = [];
     for (var i = 0; i < count; i++) {
+      var r = Math.random() * 1.1 + 0.3;
       stars.push({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: Math.random() * 1.1 + 0.3,
+        r: r,
         base: Math.random() * 0.5 + 0.25,
         phase: Math.random() * Math.PI * 2,
-        speed: Math.random() * 0.6 + 0.2
+        speed: Math.random() * 0.6 + 0.2,
+        vx: (Math.random() - 0.5) * 0.3 * (r / 0.85),  /* The 0.3 constant controls the speed of the stars. */
+        vy: (Math.random() - 0.5) * 0.3 * (r / 0.85)
       });
     }
   }
 
   function maybeSpawnShootingStar() {
     if (reduceMotion) return;
-    if (Math.random() < 0.0035 && shootingStars.length < 1) {
+    if (Math.random() < 0.001 && shootingStars.length < 1) {
       var startX = Math.random() * w * 0.6 + w * 0.1;
       var startY = Math.random() * h * 0.25;
       var len = Math.random() * 120 + 90;
@@ -68,6 +71,15 @@
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(233,231,224," + Math.max(0, tw).toFixed(3) + ")";
       ctx.fill();
+
+      if (!reduceMotion) {
+        s.x += s.vx;
+        s.y += s.vy;
+        if (s.x < -2) s.x = w + 2;
+        else if (s.x > w + 2) s.x = -2;
+        if (s.y < -2) s.y = h + 2;
+        else if (s.y > h + 2) s.y = -2;
+      }
     }
 
     for (var j = shootingStars.length - 1; j >= 0; j--) {

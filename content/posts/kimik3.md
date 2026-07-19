@@ -71,8 +71,8 @@ $$
 
 This fine-grained control allows individual channels within the same head to behave completely differently.
 
-!The mechanism of KDA depicted in a block diagram.
-
+<img src="/content/posts/kimik3/kda.png" style="display: block; margin: 0 auto; width: 400px;">
+<p></p>
 The mechanism of KDA depicted in a block diagram.
 
 The gives us a recurrent attention mechanism that retains the linear-time complexity of linear attention while dramatically improving long-context memory through selective, feature-wise forgetting.
@@ -81,22 +81,84 @@ The gives us a recurrent attention mechanism that retains the linear-time comple
 
 We know about how MOE (mixture of expert) models replace a dense feedforward layer with a layer which comprises of multiple smaller feed-forward layer per token and then have a router delegate a token to a subset to active experts. In doing that the input x is also first put through a down-projection, reducving the dimensions of the input and aiding to faster computation. This ia also why the process is called **latent** moe. The latent x is later up-projected into its original dimensions.
 
-!image.png
+<img src="/content/posts/kimik3/moe.png" style="display: block; margin: 0 auto; width: 500px;">
+<p></p>
 
 However, for K3 we face a unique challenge. The MOE is **sparse**. Lets look at the table below. Kimi K3 has the smallest layer sparsity ratio (around 1.8), compared to other moe models (and even its own previous version).
+<table style="border: 1px solid #546a53; border-collapse: collapse; width: 100%;">
+  <thead>
+    <tr style="background-color: #5d625d;">
+      <th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Model</th>
+      <th style="border: 1px solid #ccc; padding: 8px; text-align: justify;">Active Experts (Per Token)</th>
+      <th style="border: 1px solid #ccc; padding: 8px; text-align: justify;">Total Experts (Per Layer)</th>
+      <th style="border: 1px solid #ccc; padding: 8px; text-align: justify;">Layer Sparsity Ratio (Active / Total)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;"><strong>GPT-OSS 20B</strong></td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">4</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">32</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">12.50%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">GPT-OSS 120B</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">4</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">128</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">3.12%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">Qwen 3.5 (397B-A17B)</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">11 (10 routed + 1 shared)</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">512</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">2.15%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">Qwen 3.6 (35B-A3B)</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">9 (8 routed + 1 shared)</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">256</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">3.52%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">DeepSeek-V3</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">9 (8 routed + 1 shared)</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">257</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">3.50%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">DeepSeek-V4-Pro</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">16</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">256</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">6.25%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">DeepSeek-V4-Flash</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">~8</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">~128</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">6.25%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">Kimi K2.5</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">8</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">384</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">2.08%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;">Kimi K2.6</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">9 (8 routed + 1 shared)</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">385</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">2.34%</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;"><strong>Kimi K3</strong></td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">16</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;">896</td>
+      <td style="border: 1px solid #ccc; padding: 8px; text-align: justify;"><bold>1.79%</bold></td>
+    </tr>
+  </tbody>
+</table>
 
-| **Model** | **Active Experts (Per Token)** | **Total Experts (Per Layer)** | **Layer Sparsity Ratio (Active / Total)** |
-| --- | --- | --- | --- |
-| GPT-OSS 20B | 4 | 32 | 12.50%  |
-| GPT-OSS 120B | 4 | 128 | 3.12%  |
-| Qwen 3.5 (397B-A17B) | 11 (10 routed + 1 shared) | 512 | 2.15%  |
-| Qwen 3.6 (35B-A3B) | 9 (8 routed + 1 shared) | 256 | 3.52% |
-| DeepSeek-V3 | 9 (8 routed + 1 shared) | 257 | 3.50% |
-| DeepSeek-V4-Pro | 16 | 256 | 6.25% |
-| DeepSeek-V4-Flash | ~8 | ~128 | 6.25% |
-| Kimi K2.5 | 8 | 384 | 2.08%  |
-| Kimi K2.6 | 9 (8 routed + 1 shared) | 385 | 2.34% |
-| **Kimi K3**  | 16 | 896 | 1.79% |
+<p></p>
 
 At moderate sparsity, a slightly imperfect router isn’t a huge issue. If one expert receives 5% more tokens than another, the imbalance is still manageable. But at K3’s scale, where only **1.8% of experts are active**, even tiny routing biases compound rapidly. A handful of experts can become overloaded while many others receive almost no training, causing them to specialize poorly or even become effectively “dead.” Since every token depends on such a small subset of experts, routing quality becomes important.
 
@@ -137,7 +199,8 @@ $h_l = h_{l-1} + f(h_{l-1})$
 
 which is depicted in this diagram.
 
-!image.png
+<img src="/content/posts/kimik3/ar1.png" style="display: block; margin: 0 auto; width: 300px;">
+<p></p>
 
 The shortcut allows gradients to flow through very deep networks, making modern LLMs possible. However, it also introduces a subtle limitation.
 
@@ -172,7 +235,8 @@ where $v_i$ are outputs from previous layers (or blocks), and $\alpha_{i\rightar
 
 Rather than passively carrying forward the entire history, a layer can selectively reach back to early representations when needed while largely ignoring irrelevant intermediate computations. In other words, residual connections become a **retrieval mechanism** instead of a fixed accumulation mechanism.
 
-!image.png
+<img src="/content/posts/kimik3/ar2.png" style="display: block; margin: 0 auto; width: 500px;">
+<p></p>
 
 Because storing every layer output would be prohibitively expensive, Kimi K3 uses **Block Attention Residuals**, grouping neighboring layers into a handful of blocks and attending over block summaries instead of every individual layer. This preserves most of the benefits while keeping both memory usage and inference overhead low.
 
@@ -185,7 +249,8 @@ So far I’ve talked about what an architechtural feat K3 was compared to other 
 
 Instead their workflow looked like this:
 
-!image.png
+<img src="/content/posts/kimik3/mxpf.png" style="display: block; margin: 0 auto; width: 300px;">
+<p></p>
 
 The model is already trained in mixed precision and hence it does not require post-hoc quantisation to be deployed. 
 
@@ -194,11 +259,13 @@ The model is already trained in mixed precision and hence it does not require po
 
 Additionally, training a Mixture-of-Experts model isn’t just expensive because of the number of parameters. Every token needs to be routed to experts that often live on the **different GPUs that their experts live on**.
 
-!image.png
+<img src="/content/posts/kimik3/tokengpu.png" style="display: block; margin: 0 auto; width: 300px;">
+<p></p>
 
 Instead of relying on dynamic tensor shapes and frequent CPU synchronization to determine where tokens should go, Moonshot redesigned the routing pipeline around **static communication patterns** with **no host synchronization** during execution.
 
-!image.png
+<img src="/content/posts/kimik3/expertparallel.png" style="display: block; margin: 0 auto; width: 600px;">
+<p></p>
 
 Removing these synchronization points keeps GPUs busy instead of waiting for the CPU to coordinate communication. It doesn’t make the model smarter exactly, but it does help it waste less hardware.
 
@@ -215,7 +282,7 @@ All of the architechture changes mentioned above does work, yes, but like most o
 
 Arguably the best, and it ties with GPT Sol and Fable 5.
 
-!image.png
+![](/content/posts/kimik3/coding.png)
 
  That being said I did read a lot of reddit posts complaining thats its token hungy (compared to Sol).
 
@@ -223,11 +290,12 @@ Arguably the best, and it ties with GPT Sol and Fable 5.
 
 This is where it is the best. 
 
-!image.png
+![](/content/posts/kimik3/agentic.png)
 
 That being said what is really impresive is its, cost per task chart. It is better than most but costs around the same as GPT Terra.
 
-!image.png
+<img src="/content/posts/kimik3/svc.png" style="display: block; margin: 0 auto; width: 500px;">
+<p></p>
 
 ### Show, Dont tell
 
@@ -237,18 +305,27 @@ Rather than just looking at the benchmarks, here are some results that genuinely
     
     K3 wrote an MLA kernel that achieved **517.8 TFLOPS** (forward + backward) on an NVIDIA H200, over **50% of the theoretical BF16 peak throughput** of the hardware.
     
-    !image.png
+    <img src="/content/posts/kimik3/mla.png" style="display: block; margin: 0 auto; width: 500px;">
+<p></p>
     
 2. It built an entire GPU compiler. K3 developed MiniTriton (its a lightweight Triton-like GPU compiler) from scartch.
     
     That meant building, a DSL frontend, an intermediate representation (IR), optimisation passes, runtime execution, and validating everything by training a real neural network.
     
-    !image.png
+    <img src="/content/posts/kimik3/minitriton.png" style="display: block; margin: 0 auto; width: 500px;">
+<p></p>
     
 3. One thing I really like is their Vision in the loop idea. It is a simple workflow that means, instaed of generating code blindly it first writes code runs program, gets a screenshot, and see what it did wrong and modify the code accordingly.
     
-    !image.png
+    <img src="/content/posts/kimik3/visionloop.png" style="display: block; margin: 0 auto; width: 500px;">
+<p></p>
     
-    Not sure if any of the frontier models already do this but I think its really interesting.
+Not sure if any of the frontier models already do this but I think its really interesting.
     
 4. What blew my mind the most was a demo where K3 created a **3Blue1Brown-style animated explainer of the concept of quantile balancing, and its actually makes the concept pretty clear**. Heres the video, incase you’re interested.
+<video controls style="display: block; margin: 0 auto; width: 500px;">
+  <source src="/content/posts/kimik3/quantbal.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+
