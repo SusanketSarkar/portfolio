@@ -7,12 +7,12 @@
   --bg-card:       #10141b;
   --border:        rgba(232,230,223,0.09);
   --border-strong: rgba(232,230,223,0.16);
-  --text:          #e9e7e0;
-  --text-dim:      #99a0af;
-  --text-dimmer:   #62697a;
-  --accent:        #a3d9c0;
-  --accent-strong: #c3ecd8;
-  --accent-dim:    rgba(163,217,192,0.14);
+  --text:          #bcbab3ea;
+  --text-dim:      #6e8366;
+  --text-dimmer:   #586357;
+  --accent:        #69966a;
+  --accent-strong: #66db89;
+  --accent-dim:    rgba(150, 196, 145, 0.285);
   --star-opacity:  1;
 
   --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
@@ -427,6 +427,67 @@ footer{
   border-top: 1px solid var(--border);
   margin: 40px 0;
 }
+.post-body .katex-display{
+  margin: 24px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.post-body .katex{ font-size: 1.05em; }
+
+/* Post header image — stretches to full wrap width (slightly wider than body) */
+.post-header-image-wrap{
+  margin: 0 calc(-1 * var(--pad)) 30px;
+}
+.post-header-image-wrap img{
+  width:100%;
+  display:block;
+  border-radius:6px;
+}
+.post-header-image-wrap .img-caption{
+  display:block;
+  text-align:left;
+  font-size:0.82em;
+  color:var(--text-dimmer);
+  padding:4px 0 0;
+}
+
+/* Body images with caption — no box, just small right-aligned text */
+.post-body figure{
+  margin:20px 0;
+}
+.post-body figure img{
+  width:100%;
+  display:block;
+  margin:0;
+  border-radius:6px;
+  border:1px solid var(--border);
+}
+.post-body figcaption{
+  text-align:left;
+  font-size:0.82em;
+  color:var(--text-dimmer);
+  padding:4px 0 0;
+}
+
+/* Link buttons */
+.link-button{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:2px 10px;
+  border-radius:4px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  font-size:0.85em;
+  text-decoration:none !important;
+  vertical-align:baseline;
+  line-height:1.6;
+  transition:border-color .15s;
+  white-space:nowrap;
+}
+.link-button:hover{ border-color:var(--accent); }
+.link-button .link-domain{ font-weight:600; color:var(--accent); }
+.link-button .link-text{ color:var(--text-dim); }
 
 .post-footer{
   margin-top: 60px;

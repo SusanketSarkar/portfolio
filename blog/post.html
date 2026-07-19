@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 </head>
 <body>
 <canvas id="starfield" aria-hidden="true"></canvas>
@@ -39,6 +40,8 @@
 <script src="../assets/js/theme.js"></script>
 <script src="../assets/js/starfield.js"></script>
 <script src="../assets/js/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <script>
 (function () {
   var params = new URLSearchParams(window.location.search);
@@ -81,7 +84,80 @@
             headerEl.innerHTML =
               "<h1>" + escapeHtml(meta.title) + "</h1>" +
               '<p class="post-meta">' + fmtDate(meta.date) + " &middot; " + readingTime(md) + " min read" + (tags ? " &middot; " + tags : "") + "</p>";
-            bodyEl.innerHTML = marked.parse(md);
+
+            // --- 1. Set up custom marked renderer ---
+            var renderer = new marked.Renderer();
+
+            renderer.image = function(token) {
+              var h = escapeHtml(token.href);
+              var t = escapeHtml(token.text || '');
+              return '<figure><img src="' + h + '" alt="' + t + '">' +
+                     '<figcaption>' + t + '</figcaption></figure>';
+            };
+
+            renderer.link = function(token) {
+              var href = token.href;
+              var text = this.parser.parseInline(token.tokens);
+              var domain = '';
+              try { domain = new URL(href).hostname.replace(/^www\./, ''); }
+              catch(e) { domain = href; }
+              var h = escapeHtml(href);
+              var t = escapeHtml(text || href);
+              var d = escapeHtml(domain);
+              return '<a href="' + h + '" class="link-button" target="_blank" rel="noopener">' +
+                     '<span class="link-domain">' + d + '</span></a>';
+            };
+
+            marked.use({ renderer: renderer });
+
+            // --- 2. Protect LaTeX math from marked.js ---
+            var displayMath = [];
+            var inlineMath = [];
+
+            md = md.replace(/\$\$([\s\S]*?)\$\$/g, function(_, math) {
+              var i = displayMath.length;
+              displayMath.push(math);
+              return 'DSPMATH' + i + 'DSPEND';
+            });
+
+            md = md.replace(/\$(?!\$)([\s\S]*?)\$(?!\$)/g, function(_, math) {
+              var i = inlineMath.length;
+              inlineMath.push(math);
+              return 'INLMATH' + i + 'INLEND';
+            });
+
+            // --- 3. Render markdown ---
+            var html = marked.parse(md);
+
+            html = html.replace(/DSPMATH(\d+)DSPEND/g, function(_, i) {
+              return '$$' + displayMath[parseInt(i)] + '$$';
+            });
+            html = html.replace(/INLMATH(\d+)INLEND/g, function(_, i) {
+              return '$' + inlineMath[parseInt(i)] + '$';
+            });
+
+            bodyEl.innerHTML = html;
+
+            // --- 4. Render LaTeX with KaTeX ---
+            renderMathInElement(bodyEl, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+              ],
+              throwOnError: false
+            });
+
+            // --- 5. Insert header image between heading and body ---
+            var headerSrc = meta.headerImage;
+            var headerCap = meta.headerCaption;
+            if (headerSrc) {
+              var hDiv = document.createElement('div');
+              hDiv.className = 'post-header-image-wrap';
+              hDiv.innerHTML =
+                '<img src="' + escapeHtml(headerSrc) + '" alt="' + escapeHtml(headerCap || '') + '">' +
+                (headerCap ? '<span class="img-caption">' + escapeHtml(headerCap) + '</span>' : '');
+              bodyEl.parentNode.insertBefore(hDiv, bodyEl);
+            }
           });
       })
       .catch(function (err) {
