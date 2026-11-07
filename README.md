@@ -12,6 +12,7 @@ blog/index.html                the blog list — reads content/posts/manifest.js
 blog/post.html                 a single post — reads ?slug= from the URL
 content/posts/manifest.json    the index of every post + its metadata
 content/posts/<slug>.md        the post body, plain markdown
+content/posts/<slug>.html      optional interactive post fragment (format: html)
 assets/css/style.css           all styling (colors, type, layout)
 assets/js/starfield.js         the background star canvas
 assets/js/spinner.js           the small rotating ascii glyph in the hero
@@ -54,6 +55,30 @@ Two files, no code:
 
 There's an example post already in place (`content/posts/welcome.md`) — read
 it once, then delete it and its manifest entry whenever you're ready.
+
+## Interactive posts (HTML)
+
+For posts that need buttons, sliders, or other interactions, the body can be an
+HTML fragment instead of markdown. Name the file `content/posts/<slug>.html` and
+add `"format": "html"` to its manifest entry:
+
+```json
+{
+  "slug": "nudge",
+  "title": "I nudged one neuron inside a language model — here's what broke",
+  "date": "2026-11-05",
+  "excerpt": "…",
+  "tags": ["interpretability", "llm"],
+  "format": "html"
+}
+```
+
+The fragment is injected into the normal post page, so it keeps the site nav,
+theme toggle, typography, and light/dark colors. Use the site's CSS variables
+(`--text`, `--bg-elevated`, `--border`, `--accent`, etc.) rather than hardcoded
+colors, and scope custom styles under a wrapper (see `content/posts/nudge.html`).
+Inline `<script>` tags in the fragment are run after it is inserted. Posts
+without `format` are treated as markdown.
 
 ## Previewing locally
 

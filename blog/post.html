@@ -64,100 +64,136 @@
     headerEl.innerHTML = '<p class="loading">' + msg + "</p>";
   }
 
+  function htmlToText(src) {
+    var doc = new DOMParser().parseFromString(src, "text/html");
+    var junk = doc.querySelectorAll("script, style, svg");
+    for (var i = 0; i < junk.length; i++) junk[i].parentNode.removeChild(junk[i]);
+    return doc.body ? doc.body.textContent || "" : "";
+  }
+
+  function renderHeader(meta, text) {
+    document.getElementById("doc-title").textContent = meta.title + " \u2014 Susanket";
+    var tags = (meta.tags || []).join(" &middot; ");
+    headerEl.innerHTML =
+      "<h1>" + escapeHtml(meta.title) + "</h1>" +
+      '<p class="post-meta">' + fmtDate(meta.date) + " &middot; " + readingTime(text) + " min read" + (tags ? " &middot; " + tags : "") + "</p>";
+  }
+
+  function activateScripts(container) {
+    var scripts = Array.prototype.slice.call(container.querySelectorAll("script"));
+    scripts.forEach(function (old) {
+      var s = document.createElement("script");
+      for (var i = 0; i < old.attributes.length; i++) {
+        s.setAttribute(old.attributes[i].name, old.attributes[i].value);
+      }
+      s.textContent = old.textContent;
+      old.parentNode.replaceChild(s, old);
+    });
+  }
+
+  function renderHtmlPost(src) {
+    bodyEl.classList.add("post-body-html");
+    bodyEl.innerHTML = src;
+    activateScripts(bodyEl);
+  }
+
+  function renderMarkdownPost(md) {
+    var renderer = new marked.Renderer();
+
+    renderer.image = function(token) {
+      var h = escapeHtml(token.href);
+      var t = escapeHtml(token.text || '');
+      return '<figure><img src="' + h + '" alt="' + t + '">' +
+             '<figcaption>' + t + '</figcaption></figure>';
+    };
+
+    renderer.link = function(token) {
+      var href = token.href;
+      var text = this.parser.parseInline(token.tokens);
+      var domain = '';
+      try { domain = new URL(href).hostname.replace(/^www\./, ''); }
+      catch(e) { domain = href; }
+      var h = escapeHtml(href);
+      var t = escapeHtml(text || href);
+      var d = escapeHtml(domain);
+      return '<a href="' + h + '" class="link-button" target="_blank" rel="noopener">' +
+             '<span class="link-domain">' + d + '</span></a>';
+    };
+
+    marked.use({ renderer: renderer });
+
+    var displayMath = [];
+    var inlineMath = [];
+
+    md = md.replace(/\$\$([\s\S]*?)\$\$/g, function(_, math) {
+      var i = displayMath.length;
+      displayMath.push(math);
+      return 'DSPMATH' + i + 'DSPEND';
+    });
+
+    md = md.replace(/\$(?!\$)([\s\S]*?)\$(?!\$)/g, function(_, math) {
+      var i = inlineMath.length;
+      inlineMath.push(math);
+      return 'INLMATH' + i + 'INLEND';
+    });
+
+    var html = marked.parse(md);
+
+    html = html.replace(/DSPMATH(\d+)DSPEND/g, function(_, i) {
+      return '$$' + displayMath[parseInt(i)] + '$$';
+    });
+    html = html.replace(/INLMATH(\d+)INLEND/g, function(_, i) {
+      return '$' + inlineMath[parseInt(i)] + '$';
+    });
+
+    bodyEl.innerHTML = html;
+
+    renderMathInElement(bodyEl, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
+  }
+
+  function insertHeaderImage(meta) {
+    var headerSrc = meta.headerImage;
+    var headerCap = meta.headerCaption;
+    if (!headerSrc) return;
+    var hDiv = document.createElement('div');
+    hDiv.className = 'post-header-image-wrap';
+    hDiv.innerHTML =
+      '<img src="' + escapeHtml(headerSrc) + '" alt="' + escapeHtml(headerCap || '') + '">' +
+      (headerCap ? '<span class="img-caption">' + escapeHtml(headerCap) + '</span>' : '');
+    bodyEl.parentNode.insertBefore(hDiv, bodyEl);
+  }
+
   if (!slug) {
     fail("no post specified.");
   } else {
     fetch("../content/posts/manifest.json")
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error("manifest not found");
+        return r.json();
+      })
       .then(function (data) {
         var meta = (data.posts || []).find(function (p) { return p.slug === slug; });
-        if (!meta) throw new Error("post not found");
+        if (!meta || meta.published === false) throw new Error("post not found");
 
-        return fetch("../content/posts/" + slug + ".md")
+        var isHtml = meta.format === "html";
+        var ext = isHtml ? ".html" : ".md";
+
+        return fetch("../content/posts/" + slug + ext)
           .then(function (r) {
-            if (!r.ok) throw new Error("markdown file missing for this post");
+            if (!r.ok) throw new Error((isHtml ? "html" : "markdown") + " file missing for this post");
             return r.text();
           })
-          .then(function (md) {
-            document.getElementById("doc-title").textContent = meta.title + " — Susanket";
-            var tags = (meta.tags || []).join(" &middot; ");
-            headerEl.innerHTML =
-              "<h1>" + escapeHtml(meta.title) + "</h1>" +
-              '<p class="post-meta">' + fmtDate(meta.date) + " &middot; " + readingTime(md) + " min read" + (tags ? " &middot; " + tags : "") + "</p>";
-
-            // --- 1. Set up custom marked renderer ---
-            var renderer = new marked.Renderer();
-
-            renderer.image = function(token) {
-              var h = escapeHtml(token.href);
-              var t = escapeHtml(token.text || '');
-              return '<figure><img src="' + h + '" alt="' + t + '">' +
-                     '<figcaption>' + t + '</figcaption></figure>';
-            };
-
-            renderer.link = function(token) {
-              var href = token.href;
-              var text = this.parser.parseInline(token.tokens);
-              var domain = '';
-              try { domain = new URL(href).hostname.replace(/^www\./, ''); }
-              catch(e) { domain = href; }
-              var h = escapeHtml(href);
-              var t = escapeHtml(text || href);
-              var d = escapeHtml(domain);
-              return '<a href="' + h + '" class="link-button" target="_blank" rel="noopener">' +
-                     '<span class="link-domain">' + d + '</span></a>';
-            };
-
-            marked.use({ renderer: renderer });
-
-            // --- 2. Protect LaTeX math from marked.js ---
-            var displayMath = [];
-            var inlineMath = [];
-
-            md = md.replace(/\$\$([\s\S]*?)\$\$/g, function(_, math) {
-              var i = displayMath.length;
-              displayMath.push(math);
-              return 'DSPMATH' + i + 'DSPEND';
-            });
-
-            md = md.replace(/\$(?!\$)([\s\S]*?)\$(?!\$)/g, function(_, math) {
-              var i = inlineMath.length;
-              inlineMath.push(math);
-              return 'INLMATH' + i + 'INLEND';
-            });
-
-            // --- 3. Render markdown ---
-            var html = marked.parse(md);
-
-            html = html.replace(/DSPMATH(\d+)DSPEND/g, function(_, i) {
-              return '$$' + displayMath[parseInt(i)] + '$$';
-            });
-            html = html.replace(/INLMATH(\d+)INLEND/g, function(_, i) {
-              return '$' + inlineMath[parseInt(i)] + '$';
-            });
-
-            bodyEl.innerHTML = html;
-
-            // --- 4. Render LaTeX with KaTeX ---
-            renderMathInElement(bodyEl, {
-              delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false}
-              ],
-              throwOnError: false
-            });
-
-            // --- 5. Insert header image between heading and body ---
-            var headerSrc = meta.headerImage;
-            var headerCap = meta.headerCaption;
-            if (headerSrc) {
-              var hDiv = document.createElement('div');
-              hDiv.className = 'post-header-image-wrap';
-              hDiv.innerHTML =
-                '<img src="' + escapeHtml(headerSrc) + '" alt="' + escapeHtml(headerCap || '') + '">' +
-                (headerCap ? '<span class="img-caption">' + escapeHtml(headerCap) + '</span>' : '');
-              bodyEl.parentNode.insertBefore(hDiv, bodyEl);
-            }
+          .then(function (src) {
+            renderHeader(meta, isHtml ? htmlToText(src) : src);
+            if (isHtml) renderHtmlPost(src);
+            else renderMarkdownPost(src);
+            insertHeaderImage(meta);
           });
       })
       .catch(function (err) {

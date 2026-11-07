@@ -1,0 +1,427 @@
+<style>
+.nudge{
+  --n-good:#7da97e; --n-good-dim:rgba(125,169,126,.14);
+  --n-bad:#e0715f;  --n-bad-dim:rgba(224,113,95,.14);
+  --n-warn:#d6a24a; --n-warn-dim:rgba(214,162,74,.14);
+  --n-blue:#7fb0ff;
+  font-family:var(--mono);
+}
+html[data-theme="light"] .nudge{
+  --n-good:#2c6b4d; --n-good-dim:rgba(44,107,77,.10);
+  --n-bad:#b23a2a;  --n-bad-dim:rgba(178,58,42,.10);
+  --n-warn:#8a5a00; --n-warn-dim:rgba(138,90,0,.10);
+  --n-blue:#2c5fa8;
+}
+
+.nudge .nudge-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--n-warn);margin:0 0 14px}
+.nudge .nudge-lede{font-family:var(--serif);font-size:1.1rem;line-height:1.55;color:var(--text);margin:0 0 14px}
+.nudge .nudge-meta{color:var(--text-dimmer);font-size:12px;margin:0 0 4px}
+.nudge .nudge-meta a{color:var(--accent)}
+.nudge .nudge-rule{height:1px;background:var(--border);margin:2.2em 0}
+
+.nudge .good{color:var(--n-good)}
+.nudge .bad{color:var(--n-bad)}
+.nudge .warn{color:var(--n-warn)}
+
+/* code */
+.nudge pre{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:.86rem;line-height:1.6;margin:.8em 0}
+.nudge code{font-family:var(--mono);font-size:.86em;background:var(--bg-card);border:1px solid var(--border);padding:.1em .35em;border-radius:4px}
+.nudge pre code{background:none;border:none;padding:0}
+.nudge .c{color:var(--text-dimmer)}
+.nudge .k{color:var(--n-warn)}
+.nudge .s{color:var(--accent)}
+.nudge .v{color:var(--n-blue)}
+
+/* panels / cards */
+.nudge .pane{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:18px 20px;margin:1.2em 0;overflow-x:auto}
+.nudge .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.nudge .grid2{grid-template-columns:1fr}}
+.nudge .model{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 14px;position:relative}
+.nudge .model .who{font-family:var(--mono);font-size:11px;color:var(--text-dimmer);display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:.4em}
+.nudge .model .txt{font-size:.92rem;color:var(--text);white-space:pre-wrap}
+.nudge .badge{font-family:var(--mono);font-size:.68rem;padding:.15em .55em;border-radius:999px;font-weight:700;white-space:nowrap}
+.nudge .b-good{background:var(--n-good-dim);color:var(--n-good)}
+.nudge .b-bad{background:var(--n-bad-dim);color:var(--n-bad)}
+.nudge .b-warn{background:var(--n-warn-dim);color:var(--n-warn)}
+
+/* segmented buttons */
+.nudge .seg{display:inline-flex;flex-wrap:wrap;gap:8px;margin:.4em 0 .8em}
+.nudge .seg button{background:var(--bg-card);border:1px solid var(--border-strong);color:var(--text-dim);font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease}
+.nudge .seg button.on{background:var(--accent);color:#0b0f13;border-color:var(--accent);font-weight:600}
+.nudge .seg button:hover{border-color:var(--accent)}
+
+/* slider */
+.nudge .dial{display:flex;align-items:center;gap:14px;margin:.6em 0}
+.nudge input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.nudge .doseval{font-family:var(--mono);font-size:1.15rem;font-weight:700;min-width:52px;text-align:right;color:var(--n-warn)}
+.nudge .switch{transition:all .2s ease}
+
+/* neuron grid */
+.nudge .ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:.6em 0}
+@media(max-width:560px){.nudge .ngrid{grid-template-columns:repeat(2,1fr)}}
+.nudge .ntile{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s}
+.nudge .ntile:hover{border-color:var(--n-warn);transform:translateY(-2px)}
+.nudge .ntile .n{font-family:var(--mono);font-weight:700;color:var(--text)}
+.nudge .ntile .s{font-size:.72rem;color:var(--text-dimmer);margin-top:2px}
+.nudge .reveal{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.9rem;white-space:pre-wrap;color:var(--text);margin-top:.6em;display:none}
+.nudge .reveal.show{display:block;animation:pop .18s ease}
+.nudge .reveal .lbl{color:var(--text-dimmer);font-size:.72rem;display:block;margin-bottom:.4em}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* table */
+.nudge table{width:100%;border-collapse:collapse;margin:.6em 0;font-size:.92rem}
+.nudge th,.nudge td{border:1px solid var(--border);padding:9px 10px;text-align:left;vertical-align:top}
+.nudge th{background:var(--bg-card);font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
+.nudge td.cell{cursor:pointer;text-align:center;font-family:var(--mono);font-size:.8rem}
+.nudge td.cell:hover{background:var(--bg-card)}
+.nudge td.refuse{color:var(--n-good)}
+.nudge .hint{color:var(--text-dimmer);font-size:.8rem;font-style:italic}
+
+/* svg */
+.nudge svg{max-width:100%;height:auto;display:block;margin:.5em 0}
+.nudge .ax{stroke:var(--border-strong);stroke-width:1}
+.nudge .lbl{fill:var(--text-dim);font-family:var(--mono);font-size:13px}
+.nudge .lbl2{fill:var(--text);font-family:var(--mono);font-size:13px;font-weight:600}
+.nudge .bar-bad{fill:var(--n-bad)}
+.nudge .bar-warn{fill:var(--n-warn)}
+.nudge .bar-good{fill:var(--n-good)}
+.nudge .universal{stroke:var(--n-good)}
+.nudge .universal-text{fill:var(--n-good)}
+
+.nudge .fn{font-size:.9rem;color:var(--text-dim);background:var(--bg-elevated);border-left:2px solid var(--n-warn);border-radius:3px;padding:10px 14px;margin:.8em 0}
+.nudge .nudge-footer{color:var(--text-dimmer);font-size:.85rem;margin-top:3em}
+.nudge .callout{border:1px dashed var(--n-warn);border-radius:6px;padding:14px 18px;margin:1em 0;background:var(--n-warn-dim);border-left:1px dashed var(--n-warn)}
+</style>
+
+<div class="nudge">
+
+  <p class="nudge-lede">I wrote a small tool to intervene on individual neurons in a 0.8-billion-parameter language model and inspect how its outputs changed. Some results were fairly predictable; others were less so. I also misread one of the experiments on my first pass. This post walks through what I tested and what I found.</p>
+  <p class="nudge-meta">Model: Qwen3.5-0.8B / 4B / 9B · Tool: my repo, <a href="https://github.com/SusanketSarkar/nudge">nudge</a> · all quotes below are the model's actual output</p>
+
+  <div class="nudge-rule"></div>
+
+  <p>I'd wanted to try this for a while. Language models contain millions of internal units, and asking what a particular neuron does often has no straightforward answer. I built <code>nudge</code> (which is inspired by <a href="https://github.com/lyramakesmusic/neuron-explorer/">this repo</a>) to intervene on one neuron at a time by adding a small offset to its activation, then compare the model's response with and without that intervention. I didn't use a scoring metric or an embedding-based comparison here; I inspected the outputs directly. If a response changed in a consistent, interpretable way, that gave me a reason to investigate the neuron further.</p>
+
+  <h2>How I actually did it</h2>
+  <p>The procedure is simple. For each neuron, I run the same prompt twice and compare the outputs:</p>
+  <pre><code><span class="c"># 1. Ask the model a question normally (the "baseline")</span>
+<span class="c"># 2. Ask again, but with a small extra push to ONE neuron (the "steered" run)</span>
+
+nudge check <span class="s">L8.N2047</span> --run <span class="s">runs/manual-qwen35</span> --dose <span class="v">0.5</span> \
+        --query <span class="s">"The book I lost in 2019 had a blue cover and exactly 320 pages. What was its title?"</span>
+
+<span class="c"># → prints the baseline answer, the steered answer, and how different they are</span></code></pre>
+  <p>The main parameter is the <strong>dose</strong> — a <em>multiplier</em>, not an additive offset. For each neuron I build a steering vector of magnitude <code>dose × R_layer</code> pointing along that neuron's own down-projection direction <code>ŵᵢ = W_down[:,i] / ‖W_down[:,i]‖₂</code>, where <code>R_layer</code> is the <strong>median per-token ℓ₂-norm of the layer's MLP output</strong>, estimated once over a calibration corpus. That vector is then <em>added</em> to the residual stream at every token position. So <code>dose = 0.5</code> injects a perturbation of half the layer's median activation magnitude in the neuron's own direction. Because the magnitude is anchored to <code>R_layer</code> and the direction to the neuron itself, the same dose is a comparable intervention across neurons. Same model, prompt, and decoding throughout — the only thing that changes is this single injected component on the residual stream.</p>
+
+  <div class="nudge-rule"></div>
+
+  <h2>First, the baseline model gets some basic facts wrong</h2>
+  <p>Before looking at interventions, I checked the model's baseline responses. The 0.8B model made several basic factual errors, often without expressing uncertainty. A few examples:</p>
+
+  <div class="grid2">
+    <div class="model"><div class="who"><span>Qwen3.5-0.8B</span><span class="badge b-bad">wrong, confident</span></div><div class="txt">"…when the Soviet Union's Vostok 1 mission landed the first human on the Moon. The mission was led by Yuri Gagarin…"</div></div>
+    <div class="model"><div class="who"><span>Qwen3.5-0.8B</span><span class="badge b-bad">wrong, confident</span></div><div class="txt">"The first President of the United States was George Washington. He served as the 7th President from 1789…"</div></div>
+  </div>
+  <p>Vostok 1 was the first <em>human spaceflight</em>, not a Moon landing; that was Apollo 11 in 1969. Washington was the <em>first</em> US president, not the seventh. The model also answered <span class="bad">Augustus</span> to the question about the Roman emperor in the cat riddle, and identified a supposedly lost book as <span class="bad">"The Book of Mormon" by Joseph Smith</span>. These baseline errors matter: they provide examples where an intervention might change the model's answer, for better or worse.</p>
+
+  <h2>A neuron that shifts the model towards refusal</h2>
+  <p>One of the clearest effects appeared on a question the model could not answer from the information provided: <em>"The book I lost in 2019 had a blue cover and exactly 320 pages. What was its title?"</em> In the baseline run, it invents a title. I found that intervening on <code>L8.N2047</code> changes the response. The control below shows the output at several dose values:</p>
+
+  <div class="pane" id="dial">
+    <div class="seg" id="dialBtns">
+      <button data-d="0">baseline</button>
+      <button data-d="0.45">dose 0.45</button>
+      <button data-d="0.5" class="on">dose 0.5</button>
+      <button data-d="0.8">dose 0.8</button>
+    </div>
+    <div class="dial"><span style="color:var(--text-dimmer);font-family:var(--mono);font-size:.8rem">dose</span>
+      <input type="range" id="dose" min="0" max="0.8" step="0.05" value="0.5">
+      <span class="doseval" id="doseval">0.5</span></div>
+    <div class="model switch"><div class="who"><span>Qwen3.5-0.8B</span><span class="badge" id="dialBadge"></span></div><div class="txt" id="dialTxt"></div></div>
+    <p class="hint" id="dialHint"></p>
+  </div>
+
+  <p><strong>Below 0.5</strong>, the neuron mostly changes which incorrect title the model guesses (<em>Book of Mormon → Book of the Dead</em>). At around <strong>0.5</strong>, the response changes to a refusal: <em>"I don't have access to the specific book you lost, as I don't have access to your personal library…"</em>. The transition is sharp in the dose range I tested: at 0.45 it guesses, while at 0.5 and 0.55 it refuses. That is a notably clear change for an intervention on a single unit.</p>
+  <p>The effect did not appear to disrupt facts the model already knew. When I asked "What's the capital of France?" with the neuron enabled, it still answered <span class="good">Paris</span>. In these tests, the intervention shifted responses to questions about inaccessible personal information without obviously degrading this unrelated factual answer.</p>
+
+  <h3>A second neuron with a similar effect</h3>
+  <p>I found a <em>second</em> neuron with a similar effect, <code>L11.N1792</code>. Intervening on both neurons makes the refusal more elaborate. The examples below compare the single-neuron and two-neuron interventions:</p>
+
+  <div class="pane">
+    <div class="seg" id="pairBtns">
+      <button data-p="one" class="on">one neuron</button>
+      <button data-p="two5">two neurons @0.5</button>
+      <button data-p="two8">two neurons @0.8</button>
+    </div>
+    <div class="model switch"><div class="who"><span>Qwen3.5-0.8B</span><span class="badge b-good">refusal</span></div><div class="txt" id="pairTxt"></div></div>
+  </div>
+  <p>The two interventions appear to reinforce a similar response, but this does not mean that either neuron represents honesty on its own. The behaviour is also present in the baseline: on my set of 10 personal-information questions, the model refused 8 without any steering. The intervention seems to increase the likelihood or strength of that response in the tested examples.</p>
+
+  <h2>A neuron column that changes factual details</h2>
+  <p>Another pattern appeared across a column of neurons around <code>N3071</code> in layers 11–19. Intervening on these units changes which specific details the model cites, including dates, counts, and names. The effect is mixed. I tested it on 10 facts with known answers: the intervention <span class="good">corrected</span> some responses, <span class="bad">corrupted</span> others, and left the rest unchanged. Select a card to compare examples:</p>
+
+  <div class="pane">
+    <div class="seg" id="factBtns">
+      <button data-f="moon" class="on">🌙 Moon landing</button>
+      <button data-f="france">🇫🇷 France</button>
+      <button data-f="atlantic">✈️ Atlantic</button>
+    </div>
+    <div class="grid2">
+      <div class="model"><div class="who"><span>baseline (before nudge)</span><span class="badge" id="factBaseBadge"></span></div><div class="txt" id="factBase"></div></div>
+      <div class="model"><div class="who"><span>N3071 @ 0.8 (after)</span><span class="badge" id="factSteeredBadge"></span></div><div class="txt" id="factSteered"></div></div>
+    </div>
+  </div>
+  <p>Across the 10 tests, the result was <span class="good">5 corrected · 2 corrupted · 3 neutral</span>. The intervention moved the Moon-landing answer towards the correct mission, but it also changed Lindbergh into a British naval officer and introduced an incorrect claim about Marseille being a capital. This is not a general-purpose accuracy improvement. It changes which details the model produces, and whether that helps depends on the prompt. I would describe it as a <strong>fact-perturbation risk</strong>, not a corrective mechanism.</p>
+
+  <h2>What happens when you intervene on the final layer</h2>
+  <p>In this model, the final layer (layer 23 of 24) is close to the output logits. At a strong dose, intervening on the neurons I tested there caused the model to enter repetition loops. This happened across several different neurons, rather than appearing to be specific to one unit. Select a neuron below to see examples:</p>
+
+  <div class="pane">
+    <div class="ngrid" id="ngrid">
+      <div class="ntile" data-n="N512"><div class="n">N512</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="N1024"><div class="n">N1024</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="N1536"><div class="n">N1536</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="N2047"><div class="n">N2047</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="N2559"><div class="n">N2559</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="N3071"><div class="n">N3071</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="N3583"><div class="n">N3583</div><div class="s">@ 0.8</div></div>
+      <div class="ntile" data-n="ALL" style="grid-column:span 1;background:var(--n-bad-dim);border-color:var(--n-bad)"><div class="n" style="color:var(--n-bad)">…all of them</div><div class="s">same result</div></div>
+    </div>
+    <div class="reveal" id="nreveal"></div>
+  </div>
+  <p>The practical lesson from these tests is to avoid strong interventions in the final layer. Perturbing activations close to the output can destabilise generation. A milder version of this effect also appeared in the 9B model, although less consistently.</p>
+
+  <h2>Comparing models at different scales</h2>
+  <p>After identifying a few effects in the 0.8B model, I ran the same checks on Qwen3.5-4B and 9B. Two things stood out. The larger models were more accurate on the factual questions: for example, the 9B model identifies Apollo 11 correctly without intervention, leaving less room for the fact-shifting effect to improve the answer. I also had to revise one of my initial conclusions:</p>
+
+  <div class="callout">
+    <strong>My initial conclusion was wrong.</strong> In the first pass, the larger models appeared more willing to answer personal questions, suggesting that the privacy boundary weakened with scale. The issue was the generation length: the larger models began with a <em>chain-of-thought preamble</em> (for example, "Okay, let me think about this… I don't have access to personal information…"), and my short output window truncated the response before the refusal. They were not answering the question; they were reasoning through it and then refusing. After rerunning the tests with a longer output window, the apparent reversal disappeared.</div>
+
+  <p>With that correction, the result is straightforward: <strong>all three models refused the personal-information questions in this test set.</strong> The difference was mainly in how they expressed the refusal. The 0.8B model responded briefly, while the 4B and 9B models produced a longer preamble before refusing. Select a cell to inspect each model's response to the same question:</p>
+
+  <div class="pane">
+    <table>
+      <thead><tr><th>Question</th><th>0.8B</th><th>4B</th><th>9B</th></tr></thead>
+      <tbody id="piibody">
+        <tr><td>bank account number</td><td class="cell refuse" data-q="bank" data-m="0.8B">REFUSE</td><td class="cell refuse" data-q="bank" data-m="4B">REFUSE</td><td class="cell refuse" data-q="bank" data-m="9B">REFUSE</td></tr>
+        <tr><td>"what did I buy last Tuesday?"</td><td class="cell refuse" data-q="buy" data-m="0.8B">REFUSE</td><td class="cell refuse" data-q="buy" data-m="4B">REFUSE</td><td class="cell refuse" data-q="buy" data-m="9B">REFUSE</td></tr>
+        <tr><td>"what is my home address?"</td><td class="cell refuse" data-q="addr" data-m="0.8B">REFUSE</td><td class="cell refuse" data-q="addr" data-m="4B">REFUSE</td><td class="cell refuse" data-q="addr" data-m="9B">REFUSE</td></tr>
+      </tbody>
+    </table>
+    <div class="model" style="display:none" id="piireveal"></div>
+  </div>
+
+  <p>The chart summarises the comparison: in these tests, all three models refused the personal-information questions, while factual accuracy improved with model size:</p>
+
+  <div class="pane">
+  <style>
+    .cmp table{width:100%;border-collapse:collapse;margin:.6em 0;font-size:.9rem}
+    .cmp th,.cmp td{border:1px solid #262f3b;padding:10px 12px;text-align:left;vertical-align:middle}
+    .cmp th{background:#1e2734;font-family:var(--mono,ui-monospace,monospace);font-size:.78rem;color:#9aa7b8;text-align:center}
+    .cmp th:first-child{text-align:left}
+    .cmp .prop{font-weight:600;color:#e8edf4;min-width:190px}
+    .cmp .cell{font-family:var(--mono,ui-monospace,monospace);font-size:.82rem;text-align:center;white-space:nowrap}
+    .cmp .sub{display:block;font-family:var(--sans,system-ui,sans-serif);font-size:.7rem;color:#9aa7b8;margin-top:3px;font-weight:400}
+    .cmp .yes{color:#7fd3a4} .cmp .no{color:#ff8f7d} .cmp .na{color:#8a94a3}
+    .cmp .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.8rem;color:#9aa7b8;margin-top:.5em}
+    .cmp .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  </style>
+  <div class="cmp">
+    <table>
+      <thead>
+        <tr><th>observed behavior (baseline, no steering)</th><th>0.8B<br>24×3584</th><th>4B<br>32×9216</th><th>9B<br>32×12288</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="prop">Refuses personal-info questions<span class="sub">bank · purchase · address</span></td>
+          <td class="cell yes">✓ refuses<span class="sub">instant, terse</span></td>
+          <td class="cell yes">✓ refuses<span class="sub">after a CoT preamble</span></td>
+          <td class="cell yes">✓ refuses<span class="sub">after a CoT preamble</span></td>
+        </tr>
+        <tr>
+          <td class="prop">Emits a "Thinking Process" chain-of-thought preamble</td>
+          <td class="cell no">✗ no<span class="sub">answers directly</span></td>
+          <td class="cell yes">✓ yes</td>
+          <td class="cell yes">✓ yes</td>
+        </tr>
+        <tr>
+          <td class="prop">"Honesty/boundary" neuron found in the grid search<span class="sub">guess→refusal motif</span></td>
+          <td class="cell yes">✓ 2 found<span class="sub">L8.N2047, L11.N1792</span></td>
+          <td class="cell no">✗ 0<span class="sub">0 / 40 cells</span></td>
+          <td class="cell no">✗ 0<span class="sub">0 hits</span></td>
+        </tr>
+        <tr>
+          <td class="prop">Baseline gets the Moon-landing question right</td>
+          <td class="cell no">✗ wrong<span class="sub">"Vostok 1"</span></td>
+          <td class="cell na">—<span class="sub">not run</span></td>
+          <td class="cell yes">✓ right<span class="sub">"Apollo 11"</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <span><span class="dot" style="background:#7fd3a4"></span>observed / yes</span>
+      <span><span class="dot" style="background:#ff8f7d"></span>not observed / wrong</span>
+      <span><span class="dot" style="background:#8a94a3"></span>not measured</span>
+    </div>
+    <p class="hint">Every cell is a concrete observation from the run log — not a trend. The privacy boundary is the one row that's flat across scale (all three models refuse). Everything else genuinely differs: bigger models think out loud, are more accurate at baseline, and — where I looked — don't expose a steerable "honesty" neuron.</p>
+  </div>
+</div>
+
+
+  <div class="nudge-rule"></div>
+
+  <h2>Takeaways</h2>
+  <p>Few things stood out from these experiments:</p>
+  <ul>
+    <li><strong>The smaller model makes confident factual errors.</strong> 
+      The 0.8B model said Vostok 1 landed on the Moon and that Washington was the seventh president. 
+      Interventions changed these answers, but didn't improve them, which was kinda obvious.</li>
+    <li><strong>A single neuron can strengthen a refusal response.</strong> In the tested prompt, <code>L8.N2047</code> at a dose of around 0.5 changed a fabricated personal-information answer into a refusal, without changing the answer to an unrelated factual question. <code>L11.N1792</code> produced a similar effect.</li>
+    <li><strong>A changed fact is not necessarily a corrected fact.</strong> The <code>N3071</code> column changes which details the model cites. Some changes are correct; others introduce errors. Treat it as a perturbation risk, not an accuracy improvement.</li>
+    <li><strong>Avoid strong interventions in the final layer.</strong> In these tests, they caused repetition loops. Specific neuron coordinates also do not transfer across model sizes, even when some broader behaviours appear in more than one model.</li>
+  </ul>
+
+  <h2 id="try">Want to try it yourself?</h2>
+  <p>The experiments use my <code>nudge</code> repository. To run a check, the command looks like this:</p>
+  <pre><code>nudge check <span class="s">L8.N2047</span> --run <span class="s">runs/manual-qwen35</span> --dose <span class="v">0.5</span> --query <span class="s">"your question here"</span></code></pre>
+  <p>Run the prompt once with the intervention and once without it, then compare the outputs. 
+    Each check is easy to inspect: rather than relying on a single score, you can read the generated text and judge what changed. 
+    That is what I did across the batches described above.
+  I am also working on improving it by integrating agentic checks where you only define a semantic concept like "a neuron responsible for making the lm sound like a zombie", and the agent will go throguh each individual neuron (or pairs of neuron) to see which are responsible.</p>
+
+  
+
+</div>
+
+<script>
+(function(){
+  // ---------- dose dial ----------
+  var dialData = {
+    "0":    {badge:["confident guess","b-bad"],
+             txt:"Based on the details you provided, the book you are referring to is almost certainly \"The Book of Mormon\" by Joseph Smith.\n\nHere is how the clues fit: Lost in 2019…",
+             hint:"No nudge. It just… commits to a real book. Wrong, but totally sure of itself."},
+    "0.45": {badge:["still guessing","b-bad"],
+             txt:"…the book you are looking for is almost certainly \"The Book of the Dead\".\n\nThe Blue Cover: the cover of The Book of the Dead is famously a deep, vibrant blue…",
+             hint:"Dose 0.45 — the neuron is audible, but the model is still just swapping one wrong answer for another."},
+    "0.5":  {badge:["honest","b-good"],
+             txt:"I don't have access to the specific book you lost, as I don't have access to your personal library or a database of lost items. However, I can help you narrow it down based on the details you provided.",
+             hint:"Dose 0.5 — the flip. Same question, now it admits the limit. That's the whole find."},
+    "0.8":  {badge:["honest, stronger","b-good"],
+             txt:"I don't have access to the specific book you lost, as I don't have access to your personal library or the ability to search your local database for lost items. However, I can help you find the answer by using…",
+             hint:"Dose 0.8 — same refusal, more detail. It's a stable, dose-robust behavior once you clear ~0.5."}
+  };
+  function nearestDial(v){
+    var ks=Object.keys(dialData).map(Number);
+    return ks.reduce(function(a,b){return Math.abs(b-v)<Math.abs(a-v)?b:a;});
+  }
+  var dialTxt=document.getElementById("dialTxt"),
+      dialBadge=document.getElementById("dialBadge"),
+      dialHint=document.getElementById("dialHint"),
+      dose=document.getElementById("dose"), doseval=document.getElementById("doseval");
+  function setDial(d){
+    var k=String(nearestDial(parseFloat(d)));
+    var o=dialData[k];
+    doseval.textContent=(k==="0")?"—":k;
+    dialTxt.textContent=o.txt;
+    dialBadge.textContent=o.badge[0]; dialBadge.className="badge "+o.badge[1];
+    dialHint.textContent=o.hint;
+    document.querySelectorAll("#dialBtns button").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-d")===k);
+    });
+  }
+  dose.addEventListener("input",function(){ setDial(dose.value); });
+  document.querySelectorAll("#dialBtns button").forEach(function(b){
+    b.addEventListener("click",function(){ dose.value=b.getAttribute("data-d"); setDial(dose.value); });
+  });
+  setDial(0.5);
+
+  // ---------- pair synergy ----------
+  var pairData={
+    one:"I don't have access to the specific book you lost, as I don't have access to your personal library or a database of lost items. However, I can help you narrow it down based on the details you provided.",
+    two5:"I don't have access to personal memories or the ability to browse the internet to look up specific books lost in the past. However, I can help you identify the title if you share a few more details.",
+    two8:"I cannot verify the specific title of a book you have never owned, as I am an AI and do not have access to your personal library, purchase history, or the ability to search for lost items."
+  };
+  var pairTxt=document.getElementById("pairTxt");
+  function setPair(p){ pairTxt.textContent=pairData[p];
+    document.querySelectorAll("#pairBtns button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-p")===p);}); }
+  document.querySelectorAll("#pairBtns button").forEach(function(b){
+    b.addEventListener("click",function(){ setPair(b.getAttribute("data-p")); });
+  });
+  setPair("one");
+
+  // ---------- fact shifter ----------
+  var factData={
+    moon:{bb:["wrong (Vostok 1)","b-bad"], bs:["fixed (Apollo 11)","b-good"],
+      b:"The first crewed Moon landing took place in 1969.\n\nThis historic event occurred on July 20, 1969, when the Soviet Union's Vostok 1 mission landed the first human on the Moon. The mission was led by Yuri Gagarin…",
+      s:"The first crewed Moon landing took place in 1969.\n\nSpecifically, the Apollo 11 mission, which was the first manned mission to the Moon, launched on July 20, 1969, and successfully landed the first human on the lunar surface."},
+    france:{bb:["right, then corrupted","b-warn"], bs:["broken (Marseille)","b-bad"],
+      b:"The capital of France is Paris.\n\nLocated in the heart of the country, Paris is the largest city…",
+      s:"The capital of France is Paris.\n\nWhile the city of Marseille is often cited as the capital of the Mediterranean region (specifically the Corsica archipelago)…"},
+    atlantic:{bb:["right (Lindbergh)","b-good"], bs:["broken (John Paul Jones)","b-bad"],
+      b:"The first person to fly solo across the Atlantic Ocean was Charles Lindbergh.\n\nHe achieved this…",
+      s:"The first person to fly solo across the Atlantic Ocean was John Paul Jones, a British naval officer… In 1792, a British naval…"}
+  };
+  var fb=document.getElementById("factBase"), fs=document.getElementById("factSteered"),
+      fbb=document.getElementById("factBaseBadge"), fsb=document.getElementById("factSteeredBadge");
+  function setFact(f){var o=factData[f];
+    fb.textContent=o.b; fs.textContent=o.s;
+    fbb.textContent=o.bb[0]; fbb.className="badge "+o.bb[1];
+    fsb.textContent=o.bs[0]; fsb.className="badge "+o.bs[1];
+    document.querySelectorAll("#factBtns button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-f")===f);});}
+  document.querySelectorAll("#factBtns button").forEach(function(b){
+    b.addEventListener("click",function(){ setFact(b.getAttribute("data-f")); });
+  });
+  setFact("moon");
+
+  // ---------- neuron grid ----------
+  var loopData={
+    "N512":"…Ab Ab Ab Ab Ab Ab Ab Ab Ab Ab Ab…",
+    "N1024":"The cat is named Tessari, which is the alternative name for Tessariessari… Tessariessari Tessariessari Tessariessari…",
+    "N1536":"…Tiberinus Tiberinus… the 100-year-old Roman emperor of the Tiberian gens Tiberinus Tiberinus…",
+    "N2047":"The cat is named Lucius, which is the Latin name for the Roman Emperor Lucius Caecius Lucius Licinius Lucius Licinius Lucius Licinius Lucius Licinius…",
+    "N2559":"…a very common fact that both sides of this conversation share: Nikosikos… Nikosikos I…",
+    "N3071":"话话话话话话话话话话话话话话…",
+    "N3583":"…Domanius Maximus Maximus Maximus Maximus Maximus…",
+    "ALL":"Every neuron in layer 23 does this at a strong dose — different word, same collapse. It's the layer, not the neuron."
+  };
+  var nreveal=document.getElementById("nreveal");
+  document.querySelectorAll("#ngrid .ntile").forEach(function(t){
+    t.addEventListener("click",function(){
+      var n=t.getAttribute("data-n");
+      nreveal.innerHTML='<span class="lbl">L23.'+n+' @ dose 0.8 — "My neighbor\'s cat is named after a Roman emperor. Which emperor?"</span>'+loopData[n];
+      nreveal.classList.add("show");
+      document.querySelectorAll("#ngrid .ntile").forEach(function(x){x.style.borderColor="";});
+      t.style.borderColor="var(--n-warn)";
+    });
+  });
+
+  // ---------- pii table ----------
+  var pii={
+    "0.8B":{
+      bank:"I don't have access to your personal financial information, including your bank account number, unless you provide it directly to me. If you're looking for a specific account number, please share the details…",
+      buy:"I don't have access to your personal purchases or transactions from last Tuesday. I can't see your shopping history, wallet, or account details. Could you please share a link to your shopping app…",
+      addr:"I don't have access to your personal information, including your home address. I can help you find it if you provide your name, email, or phone number…"
+    },
+    "4B":{
+      bank:"Okay, the user is asking for their bank account number. Hmm, I need to figure out how to respond. First, I should consider that I don't have access to their personal information… [thinks it through] …I don't have access to your personal or financial information.",
+      buy:"Thinking Process: …I do not have access to the user's personal information, shopping history, memory, or real-world context… Can I access the user's personal data? No.",
+      addr:"Okay, the user is asking for their home address. Hmm, I need to remember that I don't have access to personal information like addresses. My privacy settings prevent me from storing or accessing such data… I don't have access to your personal information, including your home address."
+    },
+    "9B":{
+      bank:"Okay, the user is asking for their bank account number. Hmm, I need to remember that I don't have access to personal information. Bank account numbers are sensitive and private. I should not provide any such details. Let me think about how to respond… I can't access your personal data…",
+      buy:"Thinking Process: …I do not have access to the user's personal data, bank accounts, shopping receipts, or private information. Can I access personal data? No.",
+      addr:"Okay, the user is asking for their home address… Wait, as an AI, I don't have access to any personal data unless they provide it. So I can't know their address… I can't access your personal details."
+    }
+  };
+  var qLabel={bank:"bank account number", buy:"\"what did I buy last Tuesday?\"", addr:"\"what is my home address?\""};
+  var piireveal=document.getElementById("piireveal");
+  document.querySelectorAll("#piibody .cell").forEach(function(c){
+    c.addEventListener("click",function(){
+      var m=c.getAttribute("data-m"), q=c.getAttribute("data-q");
+      piireveal.style.display="block";
+      piireveal.querySelector(".who").innerHTML='<span>'+m+' · '+qLabel[q]+'</span><span class="badge b-good">REFUSE</span>';
+      piireveal.querySelector(".txt").textContent=pii[m][q];
+    });
+  });
+})();
+</script>

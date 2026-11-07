@@ -29,6 +29,17 @@
       "published": true,
       "headerImage": "/portfolio/content/posts/kimik3/header.jpeg",
       "headerCaption": "Marius at Minturnae, by Jean Drouais"
+    },
+    {
+      "slug": "nudge",
+      "title": "Notes from Nudging Neurons in a Language Model",
+      "date": "2026-11-05",
+      "excerpt": "Turning individual neurons up and down inside Qwen3.5, and reading what the model says differently.",
+      "tags": ["interpretability"],
+      "published": true,
+      "format": "html",
+      "headerImage": null,
+      "headerCaption": null
     }
   ]
 }

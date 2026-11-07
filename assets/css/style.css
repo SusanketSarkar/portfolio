@@ -7,12 +7,12 @@
   --bg-card:       #10141b;
   --border:        rgba(232,230,223,0.09);
   --border-strong: rgba(232,230,223,0.16);
-  --text:          #bcbab3ea;
-  --text-dim:      #6e836695;
-  --text-dimmer:   #586357;
-  --accent:        #678967;
-  --accent-strong: #7da97e88;
-  --accent-dim:    rgba(150, 196, 145, 0.285);
+  --text:          #d4dbd5f5;
+  --text-dim:      #438649c7;
+  --text-dimmer:   #69a363b3;
+  --accent:        #46a146;
+  --accent-strong: #329a34a6;
+  --accent-dim:    rgba(34, 95, 27, 0.801);
   --star-opacity:  1;
 
   --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
@@ -26,14 +26,14 @@ html[data-theme="light"]{
   --bg:            #f2f0ea;
   --bg-elevated:   #ffffff;
   --bg-card:       #ffffff;
-  --border:        rgba(30,30,26,0.10);
+  --border:        rgba(1, 33, 9, 0.361);
   --border-strong: rgba(30,30,26,0.18);
-  --text:          #23241f;
-  --text-dim:      #5b5c54;
-  --text-dimmer:   #8a8b81;
-  --accent:        #3f8a67;
-  --accent-strong: #2c6b4d;
-  --accent-dim:    rgba(63,138,103,0.12);
+  --text:          #022c0e;
+  --text-dim:      #0f6831;
+  --text-dimmer:   #336e45;
+  --accent:        #159627;
+  --accent-strong: #036014;
+  --accent-dim:    rgba(8, 135, 5, 0.417);
   --star-opacity:  0.35;
 }
 
