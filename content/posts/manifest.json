@@ -34,12 +34,12 @@
       "slug": "nudge",
       "title": "Notes from Nudging Neurons in a Language Model",
       "date": "2026-11-05",
-      "excerpt": "Turning individual neurons up and down inside Qwen3.5, and reading what the model says differently.",
+      "excerpt": "I wrote a small tool to intervene on individual neurons in Qwen3.5 model and inspect how its outputs changed.",
       "tags": ["interpretability"],
       "published": true,
       "format": "html",
-      "headerImage": null,
-      "headerCaption": null
+      "headerImage": "/portfolio/content/posts/nudge/cover.jpg",
+      "headerCaption": "The Ancient of Days, by William Blake, 1794"
     }
   ]
 }
