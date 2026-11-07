@@ -1,96 +1,84 @@
 <style>
-.nudge{
-  --n-good:#7da97e; --n-good-dim:rgba(125,169,126,.14);
-  --n-bad:#e0715f;  --n-bad-dim:rgba(224,113,95,.14);
-  --n-warn:#d6a24a; --n-warn-dim:rgba(214,162,74,.14);
-  --n-blue:#7fb0ff;
-  font-family:var(--mono);
-}
-html[data-theme="light"] .nudge{
-  --n-good:#2c6b4d; --n-good-dim:rgba(44,107,77,.10);
-  --n-bad:#b23a2a;  --n-bad-dim:rgba(178,58,42,.10);
-  --n-warn:#8a5a00; --n-warn-dim:rgba(138,90,0,.10);
-  --n-blue:#2c5fa8;
-}
+.nudge{ font-family:var(--mono); }
 
-.nudge .nudge-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--n-warn);margin:0 0 14px}
-.nudge .nudge-lede{font-family:var(--serif);font-size:1.1rem;line-height:1.55;color:var(--text);margin:0 0 14px}
-.nudge .nudge-meta{color:var(--text-dimmer);font-size:12px;margin:0 0 4px}
-.nudge .nudge-meta a{color:var(--accent)}
+.nudge .nudge-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-col-6);margin:0 0 14px}
+.nudge .nudge-lede{font-family:var(--serif);font-size:1.1rem;line-height:1.55;color:var(--text-col-1);margin:0 0 14px}
+.nudge .nudge-meta{color:var(--text-col-1-faint);font-size:12px;margin:0 0 4px}
+.nudge .nudge-meta a{color:var(--text-col-2)}
 .nudge .nudge-rule{height:1px;background:var(--border);margin:2.2em 0}
 
-.nudge .good{color:var(--n-good)}
-.nudge .bad{color:var(--n-bad)}
-.nudge .warn{color:var(--n-warn)}
+.nudge .good{color:var(--text-col-4)}
+.nudge .bad{color:var(--text-col-5)}
+.nudge .warn{color:var(--text-col-6)}
 
 /* code */
 .nudge pre{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:.86rem;line-height:1.6;margin:.8em 0}
 .nudge code{font-family:var(--mono);font-size:.86em;background:var(--bg-card);border:1px solid var(--border);padding:.1em .35em;border-radius:4px}
 .nudge pre code{background:none;border:none;padding:0}
-.nudge .c{color:var(--text-dimmer)}
-.nudge .k{color:var(--n-warn)}
-.nudge .s{color:var(--accent)}
-.nudge .v{color:var(--n-blue)}
+.nudge .c{color:var(--text-col-1-faint)}
+.nudge .k{color:var(--text-col-6)}
+.nudge .s{color:var(--text-col-4)}
+.nudge .v{color:var(--text-col-2)}
 
 /* panels / cards */
 .nudge .pane{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:18px 20px;margin:1.2em 0;overflow-x:auto}
 .nudge .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:640px){.nudge .grid2{grid-template-columns:1fr}}
 .nudge .model{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 14px;position:relative}
-.nudge .model .who{font-family:var(--mono);font-size:11px;color:var(--text-dimmer);display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:.4em}
-.nudge .model .txt{font-size:.92rem;color:var(--text);white-space:pre-wrap}
+.nudge .model .who{font-family:var(--mono);font-size:11px;color:var(--text-col-1-faint);display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:.4em}
+.nudge .model .txt{font-size:.92rem;color:var(--text-col-1);white-space:pre-wrap}
 .nudge .badge{font-family:var(--mono);font-size:.68rem;padding:.15em .55em;border-radius:999px;font-weight:700;white-space:nowrap}
-.nudge .b-good{background:var(--n-good-dim);color:var(--n-good)}
-.nudge .b-bad{background:var(--n-bad-dim);color:var(--n-bad)}
-.nudge .b-warn{background:var(--n-warn-dim);color:var(--n-warn)}
+.nudge .b-good{background:var(--text-col-4-dim);color:var(--text-col-4)}
+.nudge .b-bad{background:var(--text-col-5-dim);color:var(--text-col-5)}
+.nudge .b-warn{background:var(--text-col-6-dim);color:var(--text-col-6)}
 
 /* segmented buttons */
 .nudge .seg{display:inline-flex;flex-wrap:wrap;gap:8px;margin:.4em 0 .8em}
-.nudge .seg button{background:var(--bg-card);border:1px solid var(--border-strong);color:var(--text-dim);font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease}
-.nudge .seg button.on{background:var(--accent);color:#0b0f13;border-color:var(--accent);font-weight:600}
-.nudge .seg button:hover{border-color:var(--accent)}
+.nudge .seg button{background:var(--bg-card);border:1px solid var(--border-strong);color:var(--text-col-1-dim);font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:999px;cursor:pointer;transition:color .15s ease,border-color .15s ease,background .15s ease}
+.nudge .seg button.on{background:var(--text-col-2);color:#0b0f13;border-color:var(--text-col-2);font-weight:600}
+.nudge .seg button:hover{border-color:var(--text-col-2)}
 
 /* slider */
 .nudge .dial{display:flex;align-items:center;gap:14px;margin:.6em 0}
-.nudge input[type=range]{flex:1;accent-color:var(--accent);height:4px}
-.nudge .doseval{font-family:var(--mono);font-size:1.15rem;font-weight:700;min-width:52px;text-align:right;color:var(--n-warn)}
+.nudge input[type=range]{flex:1;accent-color:var(--text-col-2);height:4px}
+.nudge .doseval{font-family:var(--mono);font-size:1.15rem;font-weight:700;min-width:52px;text-align:right;color:var(--text-col-6)}
 .nudge .switch{transition:all .2s ease}
 
 /* neuron grid */
 .nudge .ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:.6em 0}
 @media(max-width:560px){.nudge .ngrid{grid-template-columns:repeat(2,1fr)}}
 .nudge .ntile{background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s}
-.nudge .ntile:hover{border-color:var(--n-warn);transform:translateY(-2px)}
-.nudge .ntile .n{font-family:var(--mono);font-weight:700;color:var(--text)}
-.nudge .ntile .s{font-size:.72rem;color:var(--text-dimmer);margin-top:2px}
-.nudge .reveal{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.9rem;white-space:pre-wrap;color:var(--text);margin-top:.6em;display:none}
+.nudge .ntile:hover{border-color:var(--text-col-6);transform:translateY(-2px)}
+.nudge .ntile .n{font-family:var(--mono);font-weight:700;color:var(--text-col-1)}
+.nudge .ntile .s{font-size:.72rem;color:var(--text-col-1-faint);margin-top:2px}
+.nudge .reveal{background:var(--bg-elevated);border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.9rem;white-space:pre-wrap;color:var(--text-col-1);margin-top:.6em;display:none}
 .nudge .reveal.show{display:block;animation:pop .18s ease}
-.nudge .reveal .lbl{color:var(--text-dimmer);font-size:.72rem;display:block;margin-bottom:.4em}
+.nudge .reveal .lbl{color:var(--text-col-1-faint);font-size:.72rem;display:block;margin-bottom:.4em}
 @keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
 /* table */
 .nudge table{width:100%;border-collapse:collapse;margin:.6em 0;font-size:.92rem}
 .nudge th,.nudge td{border:1px solid var(--border);padding:9px 10px;text-align:left;vertical-align:top}
-.nudge th{background:var(--bg-card);font-family:var(--mono);font-size:.78rem;color:var(--text-dim)}
+.nudge th{background:var(--bg-card);font-family:var(--mono);font-size:.78rem;color:var(--text-col-1-dim)}
 .nudge td.cell{cursor:pointer;text-align:center;font-family:var(--mono);font-size:.8rem}
 .nudge td.cell:hover{background:var(--bg-card)}
-.nudge td.refuse{color:var(--n-good)}
-.nudge .hint{color:var(--text-dimmer);font-size:.8rem;font-style:italic}
+.nudge td.refuse{color:var(--text-col-4)}
+.nudge .hint{color:var(--text-col-1-faint);font-size:.8rem;font-style:italic}
 
 /* svg */
 .nudge svg{max-width:100%;height:auto;display:block;margin:.5em 0}
 .nudge .ax{stroke:var(--border-strong);stroke-width:1}
-.nudge .lbl{fill:var(--text-dim);font-family:var(--mono);font-size:13px}
-.nudge .lbl2{fill:var(--text);font-family:var(--mono);font-size:13px;font-weight:600}
-.nudge .bar-bad{fill:var(--n-bad)}
-.nudge .bar-warn{fill:var(--n-warn)}
-.nudge .bar-good{fill:var(--n-good)}
-.nudge .universal{stroke:var(--n-good)}
-.nudge .universal-text{fill:var(--n-good)}
+.nudge .lbl{fill:var(--text-col-1-dim);font-family:var(--mono);font-size:13px}
+.nudge .lbl2{fill:var(--text-col-1);font-family:var(--mono);font-size:13px;font-weight:600}
+.nudge .bar-bad{fill:var(--text-col-5)}
+.nudge .bar-warn{fill:var(--text-col-6)}
+.nudge .bar-good{fill:var(--text-col-4)}
+.nudge .universal{stroke:var(--text-col-4)}
+.nudge .universal-text{fill:var(--text-col-4)}
 
-.nudge .fn{font-size:.9rem;color:var(--text-dim);background:var(--bg-elevated);border-left:2px solid var(--n-warn);border-radius:3px;padding:10px 14px;margin:.8em 0}
-.nudge .nudge-footer{color:var(--text-dimmer);font-size:.85rem;margin-top:3em}
-.nudge .callout{border:1px dashed var(--n-warn);border-radius:6px;padding:14px 18px;margin:1em 0;background:var(--n-warn-dim);border-left:1px dashed var(--n-warn)}
+.nudge .fn{font-size:.9rem;color:var(--text-col-1-dim);background:var(--bg-elevated);border-left:2px solid var(--text-col-6);border-radius:3px;padding:10px 14px;margin:.8em 0}
+.nudge .nudge-footer{color:var(--text-col-1-faint);font-size:.85rem;margin-top:3em}
+.nudge .callout{border:1px dashed var(--text-col-6);border-radius:6px;padding:14px 18px;margin:1em 0;background:var(--text-col-6-dim);border-left:1px dashed var(--text-col-6)}
 </style>
 
 <div class="nudge">
@@ -134,7 +122,7 @@ nudge check <span class="s">L8.N2047</span> --run <span class="s">runs/manual-qw
       <button data-d="0.5" class="on">dose 0.5</button>
       <button data-d="0.8">dose 0.8</button>
     </div>
-    <div class="dial"><span style="color:var(--text-dimmer);font-family:var(--mono);font-size:.8rem">dose</span>
+    <div class="dial"><span style="color:var(--text-col-1-faint);font-family:var(--mono);font-size:.8rem">dose</span>
       <input type="range" id="dose" min="0" max="0.8" step="0.05" value="0.5">
       <span class="doseval" id="doseval">0.5</span></div>
     <div class="model switch"><div class="who"><span>Qwen3.5-0.8B</span><span class="badge" id="dialBadge"></span></div><div class="txt" id="dialTxt"></div></div>
@@ -185,7 +173,7 @@ nudge check <span class="s">L8.N2047</span> --run <span class="s">runs/manual-qw
       <div class="ntile" data-n="N2559"><div class="n">N2559</div><div class="s">@ 0.8</div></div>
       <div class="ntile" data-n="N3071"><div class="n">N3071</div><div class="s">@ 0.8</div></div>
       <div class="ntile" data-n="N3583"><div class="n">N3583</div><div class="s">@ 0.8</div></div>
-      <div class="ntile" data-n="ALL" style="grid-column:span 1;background:var(--n-bad-dim);border-color:var(--n-bad)"><div class="n" style="color:var(--n-bad)">…all of them</div><div class="s">same result</div></div>
+      <div class="ntile" data-n="ALL" style="grid-column:span 1;background:var(--text-col-5-dim);border-color:var(--text-col-5)"><div class="n" style="color:var(--text-col-5)">…all of them</div><div class="s">same result</div></div>
     </div>
     <div class="reveal" id="nreveal"></div>
   </div>
@@ -391,7 +379,7 @@ nudge check <span class="s">L8.N2047</span> --run <span class="s">runs/manual-qw
       nreveal.innerHTML='<span class="lbl">L23.'+n+' @ dose 0.8 — "My neighbor\'s cat is named after a Roman emperor. Which emperor?"</span>'+loopData[n];
       nreveal.classList.add("show");
       document.querySelectorAll("#ngrid .ntile").forEach(function(x){x.style.borderColor="";});
-      t.style.borderColor="var(--n-warn)";
+      t.style.borderColor="var(--text-col-6)";
     });
   });
 

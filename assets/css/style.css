@@ -1,18 +1,28 @@
 /* ==========================================================================
    Design tokens
    ========================================================================== */
-:root{
-  --bg:            #0a0d13;
-  --bg-elevated:   #10151d;
-  --bg-card:       #10141b;
-  --border:        rgba(232,230,223,0.09);
-  --border-strong: rgba(232,230,223,0.16);
-  --text:          #d4dbd5f5;
-  --text-dim:      #438649c7;
-  --text-dimmer:   #69a363b3;
-  --accent:        #46a146;
-  --accent-strong: #329a34a6;
-  --accent-dim:    rgba(34, 95, 27, 0.801);
+:root {
+  --bg:            #111412;
+  --bg-elevated:   #29332D;
+  --bg-card:       #35433B;
+  --border:        rgba(238,233,221,0.09);
+  --border-strong: rgba(238,233,221,0.16);
+
+  /* Text palette: col-1 is the main text; 2-6 are highlight colors. */
+  --text-col-1:       #EEE9DD;
+  --text-col-1-dim:   #B9B2A3;
+  --text-col-1-faint: #898B80;
+  --text-col-2:       #A5B49A;
+  --text-col-2-dim:   rgba(165,180,154,0.16);
+  --text-col-3:       #D7B98E;
+  --text-col-3-dim:   rgba(215,185,142,0.16);
+  --text-col-4:       #A8B8A5;
+  --text-col-4-dim:   rgba(168,184,165,0.16);
+  --text-col-5:       #C47759;
+  --text-col-5-dim:   rgba(196,119,89,0.16);
+  --text-col-6:       #D9A77E;
+  --text-col-6-dim:   rgba(217,167,126,0.16);
+
   --star-opacity:  1;
 
   --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
@@ -26,14 +36,23 @@ html[data-theme="light"]{
   --bg:            #f2f0ea;
   --bg-elevated:   #ffffff;
   --bg-card:       #ffffff;
-  --border:        rgba(1, 33, 9, 0.361);
+  --border:        rgba(30,30,26,0.10);
   --border-strong: rgba(30,30,26,0.18);
-  --text:          #022c0e;
-  --text-dim:      #0f6831;
-  --text-dimmer:   #336e45;
-  --accent:        #159627;
-  --accent-strong: #036014;
-  --accent-dim:    rgba(8, 135, 5, 0.417);
+
+  --text-col-1:       #23241f;
+  --text-col-1-dim:   #5b5c54;
+  --text-col-1-faint: #8a8b81;
+  --text-col-2:       #2f6ea8;
+  --text-col-2-dim:   rgba(47,110,168,0.10);
+  --text-col-3:       #6a4fa0;
+  --text-col-3-dim:   rgba(106,79,160,0.10);
+  --text-col-4:       #2c6b4d;
+  --text-col-4-dim:   rgba(44,107,77,0.10);
+  --text-col-5:       #a0522d;
+  --text-col-5-dim:   rgba(160,82,45,0.10);
+  --text-col-6:       #8a6a00;
+  --text-col-6-dim:   rgba(138,106,0,0.10);
+
   --star-opacity:  0.35;
 }
 
@@ -45,7 +64,7 @@ html{ scroll-behavior: smooth; }
 body{
   margin: 0;
   background: var(--bg);
-  color: var(--text);
+  color: var(--text-col-1);
   font-family: var(--mono);
   font-size: 15px;
   line-height: 1.7;
@@ -55,22 +74,22 @@ body{
 img{ max-width: 100%; display:block; }
 a{ color: inherit; }
 a:focus-visible, button:focus-visible{
-  outline: 1.5px solid var(--accent);
+  outline: 1.5px solid var(--text-col-2);
   outline-offset: 3px;
   border-radius: 2px;
 }
-::selection{ background: var(--accent-dim); color: var(--text); }
+::selection{ background: var(--text-col-2-dim); color: var(--text-col-1); }
 
 .link{
-  color: var(--text);
+  color: var(--text-col-1);
   text-decoration: underline;
   text-decoration-color: var(--border-strong);
   text-underline-offset: 3px;
   transition: color .15s ease, text-decoration-color .15s ease;
 }
 .link:hover{
-  color: var(--accent-strong);
-  text-decoration-color: var(--accent);
+  color: var(--text-col-2);
+  text-decoration-color: var(--text-col-2);
 }
 
 /* ==========================================================================
@@ -105,25 +124,25 @@ a:focus-visible, button:focus-visible{
 .topbar nav{ display:flex; gap: 18px; align-items:center; }
 .topbar a{
   text-decoration: none;
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   letter-spacing: .03em;
 }
-.topbar a:hover{ color: var(--accent); }
-.topbar a.current{ color: var(--text); }
+.topbar a:hover{ color: var(--text-col-2); }
+.topbar a.current{ color: var(--text-col-1); }
 
 .theme-toggle{
   font-family: var(--mono);
   font-size: 12px;
   background: transparent;
   border: 1px solid var(--border-strong);
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   border-radius: 999px;
   padding: 5px 12px;
   cursor: pointer;
   letter-spacing: .03em;
   transition: color .15s ease, border-color .15s ease;
 }
-.theme-toggle:hover{ color: var(--text); border-color: var(--accent); }
+.theme-toggle:hover{ color: var(--text-col-1); border-color: var(--text-col-2); }
 
 /* ==========================================================================
    Layout shell
@@ -143,7 +162,7 @@ a:focus-visible, button:focus-visible{
 }
 .glyph{
   font-family: var(--mono);
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   font-size: 13px;
   line-height: 1.35;
   white-space: pre;
@@ -156,22 +175,22 @@ a:focus-visible, button:focus-visible{
   font-size: clamp(2.4rem, 6vw, 3.2rem);
   letter-spacing: .01em;
   margin: 0 0 14px;
-  color: var(--text);
+  color: var(--text-col-1);
 }
 .hero .tagline{
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   font-size: 13.5px;
   letter-spacing: .02em;
   margin: 0 0 10px;
 }
 .hero .status{
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   font-size: 12.5px;
   letter-spacing: .02em;
 }
-.hero .status b{ color: var(--text-dim); font-weight: 600; }
+.hero .status b{ color: var(--text-col-1-dim); font-weight: 600; }
 .hero .status a{ text-decoration: underline; text-decoration-color: var(--border-strong); }
-.hero .status a:hover{ color: var(--accent); text-decoration-color: var(--accent); }
+.hero .status a:hover{ color: var(--text-col-2); text-decoration-color: var(--text-col-2); }
 
 /* ==========================================================================
    Sections
@@ -182,7 +201,7 @@ section{ margin-top: 76px; }
   font-style: italic;
   font-weight: 500;
   font-size: 1.15rem;
-  color: var(--text);
+  color: var(--text-col-1);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -192,11 +211,11 @@ section{ margin-top: 76px; }
   content: "";
   width: 16px;
   height: 1px;
-  background: var(--accent);
+  background: var(--text-col-2);
   display: inline-block;
 }
 
-.prose p{ margin: 0 0 18px; color: var(--text); }
+.prose p{ margin: 0 0 18px; color: var(--text-col-1); }
 .prose p:last-child{ margin-bottom: 0; }
 
 /* Callout */
@@ -205,13 +224,13 @@ section{ margin-top: 76px; }
   padding: 18px 20px;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  border-left: 2px solid var(--accent);
+  border-left: 2px solid var(--text-col-2);
   border-radius: 3px;
   font-size: 14px;
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   line-height: 1.65;
 }
-.callout b{ color: var(--text); font-weight: 600; }
+.callout b{ color: var(--text-col-1); font-weight: 600; }
 
 /* Work entries */
 .work-group + .work-group{ margin-top: 46px; }
@@ -229,7 +248,7 @@ section{ margin-top: 76px; }
 }
 .work-group-head .role{
   font-size: 12px;
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   letter-spacing: .02em;
 }
 .work-item{
@@ -241,11 +260,11 @@ section{ margin-top: 76px; }
 }
 .work-item .title{
   font-weight: 600;
-  color: var(--text);
+  color: var(--text-col-1);
   font-size: 14px;
 }
 .work-item .desc{
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   font-size: 13.5px;
   line-height: 1.65;
 }
@@ -274,13 +293,13 @@ section{ margin-top: 76px; }
   margin: 0 0 10px;
 }
 .project-card p{
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   font-size: 13px;
   line-height: 1.6;
   margin: 0 0 14px;
 }
 .tags{
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   font-size: 11.5px;
   letter-spacing: .01em;
 }
@@ -298,7 +317,7 @@ footer{
   text-align: center;
   margin-top: 90px;
   padding-top: 30px;
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   font-size: 11.5px;
   letter-spacing: .02em;
 }
@@ -314,7 +333,7 @@ footer{
   margin: 30px 0 8px;
 }
 .page-sub{
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   font-size: 13px;
   margin: 0 0 50px;
 }
@@ -329,24 +348,24 @@ footer{
   font-weight: 600;
   font-size: 1.3rem;
   text-decoration: none;
-  color: var(--text);
+  color: var(--text-col-1);
   transition: color .15s ease;
 }
-.post-item a.post-title:hover{ color: var(--accent-strong); }
+.post-item a.post-title:hover{ color: var(--text-col-2); }
 .post-meta{
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   font-size: 11.5px;
   margin: 6px 0 10px;
   letter-spacing: .02em;
 }
 .post-excerpt{
-  color: var(--text-dim);
+  color: var(--text-col-1-dim);
   font-size: 13.5px;
   line-height: 1.65;
   margin: 0;
 }
 .empty-state{
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   font-size: 13.5px;
   padding: 40px 0;
   border-top: 1px solid var(--border);
@@ -359,11 +378,11 @@ footer{
 .post-header .back{
   display:inline-block;
   font-size: 12px;
-  color: var(--text-dimmer);
+  color: var(--text-col-1-faint);
   text-decoration: none;
   margin-bottom: 22px;
 }
-.post-header .back:hover{ color: var(--accent); }
+.post-header .back:hover{ color: var(--text-col-2); }
 .post-header h1{
   font-family: var(--serif);
   font-weight: 600;
@@ -373,11 +392,11 @@ footer{
 }
 .post-header .post-meta{ margin: 0; }
 
-.post-body{ font-size: 15px; line-height: 1.8; color: var(--text); }
+.post-body{ font-size: 15px; line-height: 1.8; color: var(--text-col-1); }
 .post-body h1, .post-body h2, .post-body h3{
   font-family: var(--serif);
   font-weight: 900;
-  color: var(--text);
+  color: var(--text-col-1);
   margin: 42px 0 16px;
   line-height: 1.6;
 }
@@ -385,15 +404,15 @@ footer{
 .post-body h2{ font-size: 2.0rem; }
 .post-body h3{ font-size: 1.8rem; }
 .post-body p{ margin: 0 0 20px; }
-.post-body a{ color: var(--accent); text-decoration: underline; text-decoration-color: var(--border-strong); }
-.post-body a:hover{ text-decoration-color: var(--accent); }
-.post-body ul, .post-body ol{ margin: 0 0 20px; padding-left: 22px; color: var(--text); }
+.post-body a{ color: var(--text-col-2); text-decoration: underline; text-decoration-color: var(--border-strong); }
+.post-body a:hover{ text-decoration-color: var(--text-col-2); }
+.post-body ul, .post-body ol{ margin: 0 0 20px; padding-left: 22px; color: var(--text-col-1); }
 .post-body li{ margin-bottom: 8px; }
 .post-body blockquote{
   margin: 24px 0;
   padding: 4px 20px;
-  border-left: 2px solid var(--accent);
-  color: var(--text-dim);
+  border-left: 2px solid var(--text-col-2);
+  color: var(--text-col-1-dim);
   font-style: italic;
 }
 .post-body code{
@@ -447,7 +466,7 @@ footer{
   display:block;
   text-align:left;
   font-size:0.82em;
-  color:var(--text-dimmer);
+  color:var(--text-col-1-faint);
   padding:4px 0 0;
 }
 
@@ -465,7 +484,7 @@ footer{
 .post-body figcaption{
   text-align:left;
   font-size:0.82em;
-  color:var(--text-dimmer);
+  color:var(--text-col-1-faint);
   padding:4px 0 0;
 }
 
@@ -485,9 +504,9 @@ footer{
   transition:border-color .15s;
   white-space:nowrap;
 }
-.link-button:hover{ border-color:var(--accent); }
-.link-button .link-domain{ font-weight:600; color:var(--accent); }
-.link-button .link-text{ color:var(--text-dim); }
+.link-button:hover{ border-color:var(--text-col-2); }
+.link-button .link-domain{ font-weight:600; color:var(--text-col-2); }
+.link-button .link-text{ color:var(--text-col-1-dim); }
 
 .post-footer{
   margin-top: 60px;
@@ -498,7 +517,7 @@ footer{
 /* ==========================================================================
    Utility
    ========================================================================== */
-.loading{ color: var(--text-dimmer); font-size: 13px; padding: 40px 0; }
+.loading{ color: var(--text-col-1-faint); font-size: 13px; padding: 40px 0; }
 
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }

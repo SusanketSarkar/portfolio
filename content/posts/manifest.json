@@ -40,6 +40,17 @@
       "format": "html",
       "headerImage": "/portfolio/content/posts/nudge/cover.jpg",
       "headerCaption": "The Ancient of Days, by William Blake, 1794"
+    },
+    {
+      "slug": "kv_asym",
+      "title": "K or V: which half of attention can we afford to compress?",
+      "date": "2026-09-06",
+      "excerpt": "A parameter-matched ablation of key versus value head allocation in grouped-query attention.",
+      "tags": ["experiments"],
+      "published": true,
+      "format": "html",
+      "headerImage": "/portfolio/content/posts/kv_asym/cover.jpg",
+      "headerCaption": "The Lament for Icarus — Herbert James Draper (1898)"
     }
   ]
 }

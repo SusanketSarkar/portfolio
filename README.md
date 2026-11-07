@@ -75,8 +75,9 @@ add `"format": "html"` to its manifest entry:
 
 The fragment is injected into the normal post page, so it keeps the site nav,
 theme toggle, typography, and light/dark colors. Use the site's CSS variables
-(`--text`, `--bg-elevated`, `--border`, `--accent`, etc.) rather than hardcoded
-colors, and scope custom styles under a wrapper (see `content/posts/nudge.html`).
+(`--text-col-1`, `--text-col-1-dim`, `--text-col-2`, `--bg-elevated`, `--border`,
+etc.) rather than hardcoded colors, and scope custom styles under a wrapper (see
+`content/posts/nudge.html` and `content/posts/kv_asym.html`).
 Inline `<script>` tags in the fragment are run after it is inserted. Posts
 without `format` are treated as markdown.
 
