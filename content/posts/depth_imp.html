@@ -1,0 +1,298 @@
+<style>
+.depth{
+  --radius:6px;
+  font-family:var(--mono);
+  color:var(--text-col-1);
+}
+.depth .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-col-2);margin:0 0 14px}
+.depth .lead{font-family:var(--serif);font-size:1.1rem;line-height:1.55;color:var(--text-col-1);margin:0 0 14px}
+.depth .strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.depth .pill{font-family:var(--mono);font-size:.72rem;border:1px solid var(--border-strong);border-radius:999px;padding:4px 11px;color:var(--text-col-1-dim);margin:0}
+.depth .pill b{color:var(--text-col-1);font-weight:600}
+.depth .rule{height:1px;background:linear-gradient(90deg,var(--border-strong),transparent);margin:26px 0}
+
+.depth a{color:var(--text-col-2);text-decoration:none}
+.depth a:hover{text-decoration:underline}
+.depth code{font-family:var(--mono);font-size:.86em;background:var(--bg-card);border:1px solid var(--border);padding:.08em .4em;border-radius:4px;color:var(--text-col-1)}
+.depth h2{font-family:var(--serif);font-weight:900;font-size:1.8rem;line-height:1.3;margin:0;color:var(--text-col-1)}
+.depth h3{font-family:var(--serif);font-weight:900;font-size:1.3rem;margin:1.4rem 0 .4rem;color:var(--text-col-1)}
+.depth h4{font-family:var(--mono);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-col-2);margin:1.6rem 0 .5rem}
+.depth p{margin:.7rem 0}
+.depth .muted{color:var(--text-col-1-dim)}
+.depth .faint{color:var(--text-col-1-faint)}
+.depth .small{font-size:.85rem}
+
+.depth section{margin-top:52px}
+.depth .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.depth .sec-num{font-family:var(--mono);font-size:.8rem;color:var(--text-col-2);border:1px solid var(--border-strong);border-radius:999px;padding:2px 10px}
+
+.depth .card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin:1.1em 0}
+.depth .card.tight{padding:13px 16px}
+.depth .card.verdict{border-left:3px solid var(--text-col-4)}
+.depth .card.hypo{border-left:3px solid var(--text-col-2)}
+.depth .card.neg{border-left:3px solid var(--text-col-6)}
+.depth .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;border-radius:999px;padding:3px 9px;margin-bottom:8px}
+.depth .tag.green{background:var(--text-col-4-dim);color:var(--text-col-4);border:1px solid var(--text-col-4)}
+.depth .tag.blue{background:var(--text-col-2-dim);color:var(--text-col-2);border:1px solid var(--text-col-2)}
+.depth .tag.amber{background:var(--text-col-6-dim);color:var(--text-col-6);border:1px solid var(--text-col-6)}
+.depth .tag.red{background:var(--text-col-5-dim);color:var(--text-col-5);border:1px solid var(--text-col-5)}
+
+.depth .tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--border);border-radius:var(--radius)}
+.depth table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:520px}
+.depth thead th{background:var(--bg-card);color:var(--text-col-1-dim);font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border-strong);white-space:nowrap;vertical-align:bottom}
+.depth tbody td{padding:8px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);vertical-align:top}
+.depth tbody tr:last-child td{border-bottom:0}
+.depth tbody tr:hover td{background:var(--bg-elevated)}
+.depth tbody td b{color:var(--text-col-2);font-weight:700}
+
+.depth figure{margin:18px 0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.depth figure img{width:100%;display:block;border-radius:4px}
+.depth figcaption{color:var(--text-col-1-dim);font-size:.82rem;margin-top:10px}
+
+.depth ul{padding-left:22px;margin:.7rem 0}
+.depth li{margin:7px 0}
+
+@media (max-width:720px){
+  .depth table{min-width:0}
+}
+</style>
+
+<div class="depth">
+
+  <header class="intro">
+    <p class="kicker">A small-model experiment in residual-stream depth</p>
+    <p class="lead">I wanted to know whether every layer contributes equally to a model’s predictions, or whether some depths carry information the rest of the network cannot easily replace. I tested that by adding controlled noise to one residual-stream slice at a time, then comparing the trained models with clean models perturbed only during evaluation.</p>
+    <div class="strip">
+      <span class="pill"><b>114</b> training runs</span>
+      <span class="pill"><b>8</b> and <b>16</b> layers</span>
+      <span class="pill"><b>531M</b> corpus tokens</span>
+      <span class="pill"><b>3</b> seeds for anchor comparisons</span>
+    </div>
+    <div class="rule"></div>
+  </header>
+
+  <div class="card verdict">
+    <span class="tag green">In brief</span>
+    <p style="margin:6px 0 0">The clearest result comes from perturbing a trained model at evaluation: the middle layers are more sensitive than the first, in both model sizes. That supports a depth-dependent information-density picture. Noise during training gives a different, more qualified result: at high dose it slows learning, and the most affected layer depends on model depth. It should not be read as a direct measure of information density.</p>
+  </div>
+
+  <!-- ============ 1. QUESTION ============ -->
+  <section id="question">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Why look at depth?</h2></div>
+    <p>A language model passes a running representation—the residual stream—through a stack of layers. A simple question follows: does each layer add information that matters equally to the final prediction, or are some depths harder to replace?</p>
+    <p>I used noise as a controlled way to ask that. If disturbing one slice changes the model’s predictions more than disturbing another, that slice is more consequential in that measurement. But there are two different measurements here. Noise added <em>after training</em> tests the model’s immediate dependence on a layer. Noise used <em>during training</em> lets the model adapt, so its result also reflects how noise changes learning.</p>
+    <div class="card neg tight">
+      <p style="margin:0"><b>To keep in mind:</b> “A larger penalty means this intervention disrupted the model more; it does not, by itself, tell us why.”</p>
+    </div>
+  </section>
+
+  <!-- ============ 2. DESIGN ============ -->
+  <section id="design">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Setup</h2></div>
+    <p>I trained two decoder-only language models on the same WebEdu corpus. For each run, Gaussian noise was added to the residual stream immediately after attention in one selected layer. The noise was present during training only; evaluation was clean. A separate evaluation-time probe perturbed one layer of an already-trained plain model.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>M</th><th>D</th></tr></thead>
+        <tbody>
+          <tr><td>layers / width / heads</td><td>8 / 512 / 6</td><td>16 / 768 / 12</td></tr>
+          <tr><td>parameters</td><td>~29M</td><td>~55M</td></tr>
+          <tr><td>tokens / run</td><td>163.8M (~104× corpus)</td><td>196.6M (~124× corpus)</td></tr>
+          <tr><td>schedule</td><td colspan="2">cosine to 0, 1000 warmup, batch 32×512, AdamW, bf16</td></tr>
+          <tr><td>corpus</td><td colspan="2">WebEdu · 531M tokens</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The intervention added zero-mean Gaussian noise after the attention sublayer in a chosen layer. Its standard deviation was σ times the local residual-stream RMS, so the dose was relative to the representation’s scale at that depth. Training runs used noise only during training; the separate sensitivity probe applied noise only at evaluation.</p>
+    <p>Each variant = one (layer, sigma) pair: <code>inserts=[{site: after_attn, name: rms_noise, layers: L, sigma: s}]</code>. "Global" control = the same per-layer sigma on <b>all</b> layers at once, so we can ask whether damage scales with <i>dose</i> (n layers × s) or with <i>location</i>.</p>
+    <h3>Run plan</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Part of sweep</th><th>What varied</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Anchor runs</td><td>First, middle and last positions; σ = 0.1, 0.3 and 1.0; repeated seeds</td><td>Compare representative depths reliably</td></tr>
+          <tr><td>Layer profile</td><td>Noise at each layer, at σ = 0.3 and 1.0</td><td>Map where disruption is largest</td></tr>
+          <tr><td>All-layer control</td><td>Same noise applied across the stack</td><td>Compare one-layer effects with accumulated noise</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Metrics per run: <code>val_bpb</code> (evaluated <i>without</i> noise), <code>gen_gap</code> = val_loss − train_loss, full eval suite; on selected runs: per-layer ablation (<code>ablate_dloss</code>), logit-lens loss curves, stream RMS profiles. <b>114</b> runs total, ~6h wall on 3 GPUs.</p>
+  </section>
+
+  <!-- ============ 3. NOISE FLOOR ============ -->
+  <section id="floor">
+    <div class="sec-head"><span class="sec-num">03</span><h2>How much variation comes from the seed?</h2></div>
+    <p>Three plain runs give a reference for run-to-run variation. The green band in the depth plots marks that scale: about ±0.0049 val_bpb for the 8-layer model and ±0.0017 for the 16-layer model. Small shifts inside the band are hard to distinguish from seed variation; large, repeated shifts are easier to interpret.</p>
+    <div class="card tight"><b>Reference scores:</b> 8-layer 1.0368 ± 0.0049 · 16-layer 0.9886 ± 0.0017 val_bpb (mean and seed spread, three runs each).</div>
+  </section>
+
+  <!-- ============ 4. FRAGILITY ============ -->
+  <section id="frag">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Where does the noise hurt?</h2></div>
+    <p>Each point compares a model trained with noise at one layer against the plain model at the same noise setting. The vertical axis is the change in clean evaluation loss (Δval_bpb); higher means the noise-trained model performed worse. The green band marks the plain-run seed variation. The large red curve is the σ=1.0 profile; the orange and blue curves are lower noise doses.</p>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/fragility_depth_m.png" alt="fragility curve M">
+      <figcaption>8-layer model: change in clean validation loss by the layer receiving training noise. Larger markers show the repeated anchor runs; smaller points are single-seed layer-profile runs.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/fragility_depth_d.png" alt="fragility curve D">
+      <figcaption>16-layer model, same comparison across 16 layers.</figcaption>
+    </figure>
+    <p>At σ=1.0, the effect is clear but its location differs: the 8-layer model is hit hardest near the first layer, while the 16-layer model is hit hardest at the last. At σ=0.1 and 0.3, many profile points sit near the seed band, so the apparent layer-to-layer wiggles deserve less confidence.</p>
+    <h3>Anchor comparisons</h3>
+    <p>Positive d(first)−d(mid) means the <b>middle is more fragile</b> (the hypothesis); positive d(last)−d(mid) means the <b>end is more fragile</b> (against it).</p>
+    <h4>M (8L)</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>sigma</th><th>Δ first</th><th>Δ mid</th><th>Δ last</th><th>d(first)−d(mid)</th><th>d(last)−d(mid)</th><th>mid vs first</th><th>mid vs last</th><th>|Δ|/floor (f−m)</th><th>|Δ|/floor (l−m)</th></tr></thead>
+        <tbody>
+          <tr><td>sig10</td><td>-0.0007</td><td>-0.0008</td><td>-0.0002</td><td><b>+0.0001</b></td><td>+0.0006</td><td>first worse</td><td>mid worse</td><td>+0.02×</td><td>+0.12×</td></tr>
+          <tr><td>sig100</td><td>+0.0969</td><td>+0.0609</td><td>+0.0528</td><td><b>+0.0360</b></td><td>-0.0081</td><td>mid worse</td><td>last worse</td><td>+7.32×</td><td>-1.64×</td></tr>
+          <tr><td>sig30</td><td>-0.0004</td><td>+0.0013</td><td>+0.0019</td><td><b>-0.0018</b></td><td>+0.0006</td><td>first worse</td><td>mixed</td><td>-0.36×</td><td>+0.12×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Paired over the 3 core seeds where available. d(first)−d(mid) &gt; 0 = middle more fragile (hypothesis); d(last)−d(mid) &gt; 0 = last more fragile than middle (against it).</p>
+    <h4>D (16L)</h4>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>sigma</th><th>Δ first</th><th>Δ mid</th><th>Δ last</th><th>d(first)−d(mid)</th><th>d(last)−d(mid)</th><th>mid vs first</th><th>mid vs last</th><th>|Δ|/floor (f−m)</th><th>|Δ|/floor (l−m)</th></tr></thead>
+        <tbody>
+          <tr><td>sig10</td><td>+0.0024</td><td>-0.0001</td><td>+0.0008</td><td><b>+0.0026</b></td><td>+0.0009</td><td>mid worse</td><td>mid worse</td><td>+1.53×</td><td>+0.56×</td></tr>
+          <tr><td>sig100</td><td>+0.0415</td><td>+0.0354</td><td>+0.0635</td><td><b>+0.0061</b></td><td>+0.0281</td><td>mid worse</td><td>mid worse</td><td>+3.68×</td><td>+16.85×</td></tr>
+          <tr><td>sig30</td><td>-0.0016</td><td>+0.0023</td><td>+0.0019</td><td><b>-0.0039</b></td><td>-0.0005</td><td>first worse</td><td>last worse</td><td>-2.33×</td><td>-0.28×</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Paired over the 3 core seeds where available. d(first)−d(mid) &gt; 0 = middle more fragile (hypothesis); d(last)−d(mid) &gt; 0 = last more fragile than middle (against it).</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>curve</th><th>ρ vs linear bump</th><th>p</th><th>ρ vs gauss bump</th><th>p</th><th>ρ vs depth</th><th>p</th></tr></thead>
+        <tbody>
+          <tr><td>s100</td><td><b>+0.000</b></td><td>1.000</td><td>+0.000</td><td>1.000</td><td>-0.857</td><td>0.016</td></tr>
+          <tr><td>s30</td><td><b>+0.293</b></td><td>0.508</td><td>+0.293</td><td>0.528</td><td>-0.190</td><td>0.662</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Bump centrality: 1 at the middle layer, 0 at the ends (linear and Gaussian variants). p = permutation test (2000 shuffles of the curve against the prior). A hypothesis-faithful result: strong positive ρ vs the bump, weak vs raw depth.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>curve</th><th>ρ vs linear bump</th><th>p</th><th>ρ vs gauss bump</th><th>p</th><th>ρ vs depth</th><th>p</th></tr></thead>
+        <tbody>
+          <tr><td>s100</td><td><b>+0.077</b></td><td>0.785</td><td>+0.077</td><td>0.795</td><td>+0.238</td><td>0.375</td></tr>
+          <tr><td>s30</td><td><b>+0.432</b></td><td>0.087</td><td>+0.432</td><td>0.098</td><td>-0.526</td><td>0.038</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Bump centrality: 1 at the middle layer, 0 at the ends (linear and Gaussian variants). p = permutation test (2000 shuffles of the curve against the prior). A hypothesis-faithful result: strong positive ρ vs the bump, weak vs raw depth.</p>
+  </section>
+
+  <!-- ============ 5. DOSE ============ -->
+  <section id="dose">
+    <div class="sec-head"><span class="sec-num">05</span><h2>How does the effect change with noise strength?</h2></div>
+    <p>These plots compare three representative positions—first, middle and last—as the noise scale rises. The horizontal axis is σ, the noise standard deviation relative to the local stream RMS; the vertical axis is the change in clean val_bpb versus the plain run. Near zero means little detectable cost; a sharp rise means the model has trouble learning with that dose.</p>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/dose_depth_m.png" alt="Dose response for the 8-layer model">
+      <figcaption>8-layer model. At σ=1.0, the first-layer intervention has the largest penalty. At lower doses, changes are close to zero.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/dose_depth_d.png" alt="Dose response for the 16-layer model">
+      <figcaption>16-layer model. The last-layer intervention rises most at σ=1.0. The layer ranking is therefore not shared across model depths.</figcaption>
+    </figure>
+    <p>Across both models, the strong-dose result is robust relative to the seed floor. The lower-dose changes are small and often comparable to that floor. This is evidence about disruption during training, not a clean ranking of stored information.</p>
+  </section>
+
+  <!-- ============ 6. CARRY ============ -->
+  <section id="carry">
+    <div class="sec-head"><span class="sec-num">06</span><h2>What are the layers actually carrying?</h2></div>
+    <p>To understand the plain models themselves, I also measured two things: how much clean loss rises when a layer’s output is ablated, and how the logit-lens prediction changes as representations move through the stack. These are context for the noise experiments, not direct measures of information density.</p>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/ablation_depth_m.png" alt="ablation M">
+      <img src="/portfolio/content/posts/depth_imp/ablation_depth_d.png" alt="ablation D" style="margin-top:14px">
+      <figcaption>Bars show the increase in loss when that layer’s output is removed; the line shows the σ=1.0 training-noise penalty. The two quantities have different meanings, so compare their shapes cautiously.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/lens_depth_m.png" alt="lens M">
+      <img src="/portfolio/content/posts/depth_imp/lens_depth_d.png" alt="lens D" style="margin-top:14px">
+      <figcaption>Blue: loss from decoding the residual stream at each layer with the logit lens (lower is better). Gray, right axis: stream RMS, which grows with depth. The RMS curve explains why absolute noise size grows with depth even when σ is normalized.</figcaption>
+    </figure>
+    <p>Ablation effects are concentrated at the first layer, while the logit-lens loss falls steadily with depth. Neither curve alone reproduces the middle-peaked evaluation-time sensitivity. That is a reminder that “importance” depends on the probe.</p>
+    <h3>Test-time sensitivity: what the final model depends on</h3>
+    <p>This is the cleanest probe of depth-dependent dependence: starting from one trained plain model, I add RMS-scaled noise to one residual-stream slice during evaluation and immediately measure the change in val_bpb. There is no retraining or adaptation. The blue curves show this direct sensitivity; the red curves show the different training-time outcome.</p>
+    <h4>M (8L)</h4>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/sensitivity_depth_m.png" alt="sensitivity depth_m">
+      <figcaption>Red: train-time fragility (trained with noise at L, evaluated clean). Blue: test-time sensitivity of the plain model (evaluated with noise at L). Both Δval_bpb at σ=1.0.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>σ</th><th>ρ vs linear bump</th><th>p</th><th>ρ vs gauss bump</th><th>p</th><th>peak L</th><th>min L</th><th>ρ vs ablation</th><th>p</th><th>ρ vs lens</th><th>ρ vs out-proj scale</th><th>ρ vs train-time fragility</th></tr></thead>
+        <tbody>
+          <tr><td>sig10</td><td>+0.000</td><td>1.000</td><td>+0.000</td><td>1.000</td><td><b>7</b></td><td>0</td><td>+0.310</td><td>0.465</td><td>+0.095</td><td>+1.000</td><td><b>—</b></td></tr>
+          <tr><td>sig100</td><td>+0.732</td><td>0.059</td><td>+0.732</td><td>0.056</td><td><b>5</b></td><td>0</td><td>-0.262</td><td>0.538</td><td>-0.524</td><td>+0.429</td><td><b>-0.595</b></td></tr>
+          <tr><td>sig30</td><td>+0.000</td><td>1.000</td><td>+0.000</td><td>1.000</td><td><b>7</b></td><td>0</td><td>+0.310</td><td>0.467</td><td>+0.095</td><td>+1.000</td><td><b>-0.190</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Read the blue series against its own right-hand axis. Its peak is the most sensitive layer and its minimum is the least sensitive. Red uses the left-hand axis and describes training-time learning disruption. The scales differ, so compare the pattern, not the heights.</p>
+    <h4>D (16L)</h4>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/sensitivity_depth_d.png" alt="sensitivity depth_d">
+      <figcaption>Red: train-time fragility (trained with noise at L, evaluated clean). Blue: test-time sensitivity of the plain model (evaluated with noise at L). Both Δval_bpb at σ=1.0.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>σ</th><th>ρ vs linear bump</th><th>p</th><th>ρ vs gauss bump</th><th>p</th><th>peak L</th><th>min L</th><th>ρ vs ablation</th><th>p</th><th>ρ vs lens</th><th>ρ vs out-proj scale</th><th>ρ vs train-time fragility</th></tr></thead>
+        <tbody>
+          <tr><td>sig10</td><td>+0.006</td><td>0.995</td><td>+0.006</td><td>0.989</td><td><b>15</b></td><td>0</td><td>+0.585</td><td>0.019</td><td>+0.112</td><td>+0.982</td><td><b>—</b></td></tr>
+          <tr><td>sig100</td><td>+0.621</td><td>0.010</td><td>+0.621</td><td>0.008</td><td><b>1</b></td><td>0</td><td>-0.721</td><td>0.004</td><td>-0.574</td><td>-0.394</td><td><b>-0.153</b></td></tr>
+          <tr><td>sig30</td><td>+0.018</td><td>0.955</td><td>+0.018</td><td>0.963</td><td><b>15</b></td><td>0</td><td>+0.579</td><td>0.022</td><td>+0.109</td><td>+0.979</td><td><b>-0.512</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Sensitivity = Δval_bpb of the plain model when one stream slice is noised at eval time. Peak/min = the most/least sensitive layer. Correlations test which story fits: a density story predicts high ρ with ablation/lens; a bookkeeping story predicts high ρ with output-projection scale.</p>
+    <div class="card neg">
+      <span class="tag amber">the scale null</span>
+      <p style="margin:6px 0 0">Output-projection weight norm is a confound: bigger <code>attn.proj</code>/<code>mlp.down</code> means the sublayer writes more into the stream, so (a) its noise matters more and (b) its ablation looks worse. Correlating fragility against that norm is the null we must clear before claiming a <i>computational</i> story about the middle. M (8L, ~29M params) and D (16L, ~52M params), same width (d=512), same corpus and optimizer. Depth is the only thing that changes between the two, so a pattern that holds at both scales is a depth effect, not a size effect. The key scale-dependent result: at strong noise, the 8L model is most fragile at the first layer while the 16L model is most fragile at the last layer.</p>
+    </div>
+  </section>
+
+  <!-- ============ 7. REGULARISER ============ -->
+  <section id="reg">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Did noise hurt generalization, or learning?</h2></div>
+    <p>A worse validation score alone cannot tell us whether a model learned less overall or learned a worse train-to-validation relationship. I therefore split the training-time result into train NLL and <code>gen_gap = val_nll − train_nll</code>.</p>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/gen_gap_depth_m.png" alt="Generalization gap by variant for 8-layer model">
+      <figcaption>8-layer model: each bar is val loss minus train loss for one run. The dashed line is the plain-run reference. The dense labels are experiment IDs, so the key comparison is the overall spread, not any single label.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/gen_gap_depth_d.png" alt="Generalization gap by variant for 16-layer model">
+      <figcaption>16-layer model, same measure. The gap remains in a narrow range across single-layer σ=1.0 runs; all-layer noise is a separate control and shifts it substantially.</figcaption>
+    </figure>
+    <div class="card tight"><b>Audit of the 18 σ=1.0 anchor runs:</b> gen_gap stays between about −0.48 and −0.52, while the increase in validation loss is approximately matched by the increase in training loss in every run. The penalty is therefore best described as learning disruption or underfitting in this training budget, not a differential generalization failure.</div>
+    <p>The training curves show why that reading fits: train loss falls similarly at first, then noisy runs tend to finish higher. Validation loss also improves throughout, but noisy runs remain behind. The models are not converged, so this experiment measures early-learning behavior.</p>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/trajectories_depth_m.png" alt="Training and validation trajectories for 8-layer model">
+      <figcaption>8-layer model: left, training loss; right, clean validation loss over training steps. Each thin line is a run. Separation late in training reflects learning progress, not a different gen_gap alone.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/depth_imp/trajectories_depth_d.png" alt="Training and validation trajectories for 16-layer model">
+      <figcaption>16-layer model, same layout. The training and validation curves move together across variants, consistent with the σ=1.0 decomposition.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ 8. ANSWER ============ -->
+  <section id="answer">
+    <div class="sec-head"><span class="sec-num">08</span><h2>What the experiment supports</h2></div>
+    <p><b>Information density varies by depth in these models.</b> In the no-retraining evaluation probe, middle layers produce the largest loss increase when perturbed, and the first layer the smallest, in both the 8- and 16-layer models. This is the strongest evidence for the headline: the middle representation is less replaceable under this intervention.</p>
+    <p><b>Training-time fragility is a separate result.</b> At σ=1.0, noise reliably disrupts learning, but the location depends on depth: first layer in the 8-layer model, last layer in the 16-layer model. The train-loss/gen-gap audit shows this is largely a learning-speed effect, not evidence that those layers contain more or less information. Lower-dose findings are weaker because many effects approach the seed variation.</p>
+    <h3>How far should we generalize?</h3>
+    <ul>
+      <li>The 8-layer model saw 163.8M tokens and the 16-layer model 196.6M from the 531M-token WebEdu corpus—about 0.31 and 0.37 passes through the data. Both are undertrained, so the training-time result describes this learning regime.</li>
+      <li>These are small models (about 29M and 55M parameters) trained on one educational-text corpus. Seeing the evaluation-time pattern at both depths is encouraging, but larger models and broader data remain open questions.</li>
+      <li>Each run perturbed one layer. The all-layer controls show much larger penalties (about +0.41 and +1.48 val_bpb at σ=1.0), but they do not isolate which combinations cause the increase.</li>
+      <li>The seed reference differs by scale: ±0.0049 for 8 layers and ±0.0017 for 16 layers. Interpret “large” relative to the corresponding model’s floor.</li>
+    </ul>
+    <p>The short answer is yes: the evaluation-time probe points to a middle peak in information density. The training-time experiment adds a different finding—noise can disrupt learning in a depth-dependent way—but it should not be used as a proxy for density.</p>
+  </section>
+
+</div>

@@ -51,6 +51,17 @@
       "format": "html",
       "headerImage": "/portfolio/content/posts/kv_asym/cover.jpg",
       "headerCaption": "The Lament for Icarus — Herbert James Draper (1898)"
+    },
+    {
+      "slug": "depth_imp",
+      "title": "Does the language model’s information density vary by residual stream depth?",
+      "date": "2026-11-08",
+      "excerpt": "A small-model experiment on whether every layer contributes equally, using controlled noise on one residual-stream slice at a time.",
+      "tags": ["respresentation dynamics"],
+      "published": true,
+      "format": "html",
+      "headerImage": "/portfolio/content/posts/depth_imp/cover.jpg",
+      "headerCaption": "Landscape with Aeneas at Delos by Claude Lorrain (1672)"
     }
   ]
 }

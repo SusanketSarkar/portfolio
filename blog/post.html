@@ -157,6 +157,133 @@
     });
   }
 
+  function slugify(str) {
+    return String(str).toLowerCase().trim()
+      .replace(/[^\w]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "section";
+  }
+
+  function headingText(h) {
+    var clone = h.cloneNode(true);
+    var strip = clone.querySelectorAll(".sec-num, .no");
+    for (var i = 0; i < strip.length; i++) strip[i].parentNode.removeChild(strip[i]);
+    return clone.textContent.trim();
+  }
+
+  function buildToc() {
+    var old = document.querySelector(".toc-rail");
+    if (old) old.parentNode.removeChild(old);
+
+    var all = Array.prototype.slice.call(bodyEl.querySelectorAll("h2, h3, h4"))
+      .filter(function (h) { return headingText(h); });
+    if (all.length < 2) return;
+
+    function levelOf(h) { return parseInt(h.tagName.charAt(1), 10); }
+    var baseLevel = 4;
+    all.forEach(function (h) { baseLevel = Math.min(baseLevel, levelOf(h)); });
+
+    var heads = all.filter(function (h) { return levelOf(h) <= baseLevel + 1; });
+    if (heads.length < 2) return;
+
+    heads.forEach(function (h) {
+      var base = slugify(headingText(h));
+      var id = h.id || base;
+      var n = 2;
+      while (document.getElementById(id) && document.getElementById(id) !== h) {
+        id = base + "-" + n++;
+      }
+      h.id = id;
+    });
+
+    var nav = document.createElement("nav");
+    nav.className = "toc-rail";
+    nav.setAttribute("aria-label", "On this page");
+
+    var postTitle = document.querySelector(".post-header h1");
+    var titleText = postTitle ? postTitle.textContent.trim() : "";
+    if (titleText) {
+      var top = document.createElement("div");
+      top.className = "toc-item toc-top";
+      var topLabel = document.createElement("span");
+      topLabel.className = "toc-label";
+      topLabel.textContent = titleText;
+      var topBar = document.createElement("span");
+      topBar.className = "toc-bar";
+      top.appendChild(topLabel);
+      top.appendChild(topBar);
+      nav.appendChild(top);
+    }
+
+    var items = heads.map(function (h) {
+      var text = headingText(h);
+      var a = document.createElement("a");
+      a.className = "toc-item" + (levelOf(h) > baseLevel ? " sub" : "");
+      a.href = "#" + h.id;
+      a.setAttribute("aria-label", text);
+
+      var label = document.createElement("span");
+      label.className = "toc-label";
+      label.textContent = text;
+
+      var bar = document.createElement("span");
+      bar.className = "toc-bar";
+      bar.style.width = Math.max(8, Math.min(20, 8 + text.length * 0.3)) + "px";
+
+      a.appendChild(label);
+      a.appendChild(bar);
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        h.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (history.replaceState) history.replaceState(null, "", "#" + h.id);
+      });
+      nav.appendChild(a);
+      return a;
+    });
+
+    document.body.appendChild(nav);
+
+    var hideTimer;
+    function openRail() {
+      clearTimeout(hideTimer);
+      nav.classList.add("open");
+    }
+    function closeRail() {
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(function () { nav.classList.remove("open"); }, 250);
+    }
+    nav.addEventListener("mouseenter", openRail);
+    nav.addEventListener("mouseleave", closeRail);
+    nav.addEventListener("focusin", openRail);
+    nav.addEventListener("focusout", closeRail);
+
+    function setActive(id) {
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.toggle("active", items[i].getAttribute("href") === "#" + id);
+      }
+    }
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var cur = heads[0];
+        for (var i = 0; i < heads.length; i++) {
+          if (heads[i].getBoundingClientRect().top <= 160) cur = heads[i];
+        }
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+          cur = heads[heads.length - 1];
+        }
+        setActive(cur.id);
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+  }
+
   function insertHeaderImage(meta) {
     var headerSrc = meta.headerImage;
     var headerCap = meta.headerCaption;
@@ -194,6 +321,7 @@
             if (isHtml) renderHtmlPost(src);
             else renderMarkdownPost(src);
             insertHeaderImage(meta);
+            buildToc();
           });
       })
       .catch(function (err) {

@@ -46,35 +46,39 @@
   </section>
 
   <section id="work">
-    <h2 class="section-label">selected work</h2>
+  <h2 class="section-label">selected work</h2>
 
-    <div class="work-group">
-      <div class="work-group-head">
-        <span class="org">Esri</span>
-        <span class="role">Geospatial AI Researcher &middot; current</span>
-      </div>
-
-      <div class="work-item">
-        <div class="title">Global Location Encoder</div>
-        <div class="desc">Dual-encoder model (DINOv2 + Terramind) producing global-scale location embeddings from Sentinel-2 imagery, with weighted grid-based sampling and a relational loss. Benchmarked against GeoCLIP and SatCLIP.</div>
-      </div>
-
-      <div class="work-item">
-        <div class="title">High-Resolution US Location Embeddings</div>
-        <div class="desc">A fine-grained location encoder tuned for the continental US, extending the global model to finer spatial resolution for downstream prediction tasks.</div>
-      </div>
-
-      <div class="work-item">
-        <div class="title">Multimodal Demographic Model</div>
-        <div class="desc">Combines tabular, image, text, and coordinate signals through cross-attention fusion to predict demographic outcomes at the grid-cell level &mdash; outperforming Google's PDFM on downstream benchmarks.</div>
-      </div>
-
-      <div class="work-item">
-        <div class="title">LLM-Assisted Caption Generation Pipeline</div>
-        <div class="desc">A two-stage LLM pipeline (running against Ollama / vLLM) that generates natural-language demographic captions for roughly 33,000 US ZIP codes from Census and ACS data.</div>
-      </div>
+  <div class="work-group">
+    <div class="work-group-head">
+      <span class="org">Esri</span>
+      <span class="role">ml research, geospatial ai &middot; current</span>
     </div>
-  </section>
+
+    <div class="work-items">
+
+      <div class="work-item">
+        <div class="desc">I'm working on <strong>vision-language models for Earth observation</strong>, with a focus on making them work across heterogeneous satellite imagery, including <strong>multispectral and hyperspectral data</strong>. The broader goal is to learn shared visual-semantic representations that generalize across sensors, modalities, and observation types.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="desc">I built a <strong>global embedding-based retrieval engine</strong> for satellite imagery, where complex natural-language queries retrieve semantically similar image tiles across large geospatial collections. The system is designed around <strong>scalable vector retrieval</strong> and achieves <strong>sub-second query latency</strong>.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="desc">I'm developing a <strong>conversational reasoning system for Earth observation imagery</strong>. The idea is to bring structured decision-making and multi-step reasoning to geospatial analysis, allowing users to investigate scenes, ask spatial questions, and work through visual information using natural language.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="desc">I'm building a <strong>multilingual, multimodal demographic modeling framework</strong> that brings together census statistics, geospatial imagery, textual context, and language signals. The focus is on learning shared representations across these modalities and using them for <strong>fine-grained demographic inference</strong> at the geographic level.</div>
+      </div>
+
+      <div class="work-item">
+        <div class="desc">I've also been working on <strong>location representation learning</strong>, developing global and high-resolution location encoders for downstream prediction tasks. This involves learning spatially meaningful embeddings across different geographic scales, with an emphasis on <strong>generalization and preserving spatial relationships</strong>.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
   <section id="projects">
     <h2 class="section-label">projects</h2>
