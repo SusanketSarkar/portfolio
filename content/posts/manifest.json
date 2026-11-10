@@ -62,6 +62,17 @@
       "format": "html",
       "headerImage": "/portfolio/content/posts/depth_imp/cover.jpg",
       "headerCaption": "Landscape with Aeneas at Delos by Claude Lorrain (1672)"
+    },
+    {
+      "slug": "layout_schedule",
+      "title": "Is the conventional arrangement of alternating attention and MLP layers actually optimal?",
+      "date": "2026-11-09",
+      "excerpt": "Does different stages of language modeling require different computational operations.",
+      "tags": ["respresentation dynamics"],
+      "published": true,
+      "format": "html",
+      "headerImage": "/portfolio/content/posts/layout_schedule/cover.jpg",
+      "headerCaption": "The Course of Empire: Consummation by Thomas Cole (1835)"
     }
   ]
 }

@@ -1,0 +1,248 @@
+<style>
+.layout{
+  --radius:6px;
+  font-family:var(--mono);
+  color:var(--text-col-1);
+}
+.layout .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-col-2);margin:0 0 14px}
+.layout .lead{font-family:var(--serif);font-size:1.1rem;line-height:1.55;color:var(--text-col-1);margin:0 0 12px}
+.layout .meta{color:var(--text-col-1-faint);font-size:12px;line-height:1.6;margin:0}
+.layout .rule{height:1px;background:linear-gradient(90deg,var(--border-strong),transparent);margin:26px 0}
+
+.layout a{color:var(--text-col-2);text-decoration:none}
+.layout a:hover{text-decoration:underline}
+.layout code{font-family:var(--mono);font-size:.86em;background:var(--bg-card);border:1px solid var(--border);padding:.08em .4em;border-radius:4px;color:var(--text-col-1)}
+.layout h2{font-family:var(--serif);font-weight:900;font-size:1.8rem;line-height:1.3;margin:0;color:var(--text-col-1)}
+.layout h3{font-family:var(--serif);font-weight:900;font-size:1.3rem;margin:1.4rem 0 .4rem;color:var(--text-col-1)}
+.layout p{margin:.7rem 0}
+.layout .muted{color:var(--text-col-1-dim)}
+.layout .faint{color:var(--text-col-1-faint)}
+.layout .small{font-size:.85rem}
+
+.layout section{margin-top:52px}
+.layout .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.layout .sec-num{font-family:var(--mono);font-size:.8rem;color:var(--text-col-2);border:1px solid var(--border-strong);border-radius:999px;padding:2px 10px}
+
+.layout .label{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--text-col-1-faint);margin-bottom:6px}
+.layout .tldr,
+.layout .takeaway,
+.layout .caveat{
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  margin:1.2em 0;
+}
+.layout .tldr{border-left:3px solid var(--text-col-2)}
+.layout .takeaway{border-left:3px solid var(--text-col-4)}
+.layout .caveat{border-left:3px solid var(--text-col-6)}
+
+.layout .eq{
+  overflow:auto;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:12px 14px;
+  margin:1em 0;
+  font-family:var(--mono);
+  font-size:.85rem;
+  color:var(--text-col-1);
+}
+
+.layout figure{margin:18px 0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.layout figure img{width:100%;display:block;border-radius:4px}
+.layout figcaption{color:var(--text-col-1-dim);font-size:.82rem;margin-top:10px;line-height:1.6}
+.layout figcaption b{color:var(--text-col-1)}
+
+.layout .tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--border);border-radius:var(--radius)}
+.layout table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:520px}
+.layout thead th{background:var(--bg-card);color:var(--text-col-1-dim);font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border-strong);white-space:nowrap;vertical-align:bottom}
+.layout tbody td{padding:8px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);vertical-align:top}
+.layout tbody tr:last-child td{border-bottom:0}
+.layout tbody tr:hover td{background:var(--bg-elevated)}
+
+.layout ul,
+.layout ol{padding-left:22px;margin:.7rem 0}
+.layout li{margin:7px 0}
+
+.layout .post-footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-col-1-faint);font-size:.85rem}
+.layout .post-footer p{margin:.6rem 0}
+
+@media (max-width:720px){
+  .layout table{min-width:0}
+}
+</style>
+
+<div class="layout">
+
+  <header class="intro">
+    <p class="kicker">ML research note · transformer architecture</p>
+    <p class="lead">A controlled study of layer order: when does the familiar alternating pattern help, and when does a task reward a different schedule?</p>
+    <p class="meta">Models: 8.3M / 31.5M / 80.1M parameters · Natural text and synthetic tasks · 143 runs across seven sweeps · Single-CPU study</p>
+    <div class="rule"></div>
+  </header>
+
+  <div class="tldr">
+    <div class="label">TL;DR</div>
+    <p><strong>The best arrangement depends on the task.</strong> On the natural-text <code>Fineweb Edu</code> benchmark, interleaved layouts form the strongest group; none of the five hand-designed depth-block layouts beats the four random interleavings. The standard alternating layout is a solid default, though it is not the single best run.</p>
+    <p>On a synthetic one-hop recall task, putting attention near both ends of the network performs much better than concentrating it in the middle. Separately, replacing up to half the attention sublayers with MLP sublayers changes natural-text validation loss only slightly in these experiments, while measured FLOPs fall by 1.2–3.6%.</p>
+    <p><strong>Practical answer:</strong> keep attention and MLPs interleaved for broad language modeling unless you have evidence for a task-specific schedule. For efficiency, reducing attention count is a promising option at this scale—but the savings and quality trade-off need rechecking at longer contexts and larger models.</p>
+  </div>
+
+  <section id="question">
+    <div class="sec-head"><span class="sec-num">01</span><h2>What question does this experiment answer?</h2></div>
+    <p>A transformer layer combines two operations. <strong>Attention</strong> lets one token use information from other positions. An <strong>MLP</strong> transforms features at each position independently. The usual GPT layout alternates them:</p>
+    <div class="eq">… → attention → MLP → attention → MLP → …</div>
+    <p>Could a model do better if these operations were arranged differently by depth—for example, with attention concentrated in the middle or at the ends? And if a layout change does matter, does the answer depend on what the model is asked to do?</p>
+    <p>We tested two distinct ideas. First, we rearranged the same number of attention and MLP sublayers, so parameter count and operation counts stayed fixed. Second, we reduced the number of attention sublayers and added MLP sublayers, matching parameters and measuring FLOPs. The first tests <em>where</em> operations go; the second tests whether some attention can be removed.</p>
+    <p>The comparisons use a common layout mechanism, including for the alternating baseline, to keep initialization and implementation consistent. The main natural-text experiment uses 48 sublayers (24 attention and 24 MLP), an 80.1M-parameter model, and three random seeds per layout. Smaller 16- and 32-sublayer runs check whether the broad pattern changes with depth.</p>
+  </section>
+
+  <section id="layouts">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Which layouts were compared?</h2></div>
+    <p>Every Family 1 layout contains 24 attention and 24 MLP sublayers; only their order changes. Blue in the diagram is attention and orange is MLP. The random layouts are shuffled controls, while A–D and “sandwich” place operation types in chosen depth bands.</p>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/layout_map.png" alt="Ten 48-sublayer layouts showing attention and MLP positions">
+      <figcaption><b>The layout map.</b> Each small colored block is one sublayer, ordered from input (left) to output (right). The alternating baseline spreads both operations throughout depth. Other rows either shuffle that mix or group one operation into a band. This lets us ask whether a deliberate depth pattern helps beyond ordinary interleaving.</figcaption>
+    </figure>
+    <p>In shorthand: A puts MLPs at the ends and attention in the middle; B puts attention at the ends and MLPs in the middle; C uses MLP-only ends with an attention-heavy center; D uses attention-only ends with an MLP-heavy center. The sandwich layout has attention near the ends and an alternating core.</p>
+  </section>
+
+  <section id="natural-text">
+    <div class="sec-head"><span class="sec-num">03</span><h2>On natural text, does a designed schedule beat interleaving?</h2></div>
+    <p>For the main comparison, each layout was trained on <code>Fineweb Edu</code> and evaluated by validation loss (lower is better). Across the ten layouts, all four random interleavings beat all five designed depth-block layouts. The usual alternating baseline also lands in the stronger group.</p>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/noise_floor.png" alt="Validation loss for ten layouts with seed variation">
+      <figcaption><b>Validation loss and seed variation.</b> Bars show the mean across three seeds; error bars show the across-seed standard deviation. The lowest-loss layout is rand1 (2.680) and the highest is C (2.755), a difference of 0.076. The dashed line marks the measured noise floor used in the analysis. The separation between the best and worst layouts is much larger than that noise estimate, though this does not make every pairwise ranking statistically decisive.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Group / layout</th><th>Validation loss</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td>rand1</td><td>2.680</td><td>Best measured mean</td></tr>
+          <tr><td>rand3, rand2</td><td>2.693, 2.700</td><td>Other strong shuffled layouts</td></tr>
+          <tr><td>Alternating baseline</td><td>2.703</td><td>Strong default</td></tr>
+          <tr><td>rand0</td><td>2.711</td><td>Still ahead of designed schedules</td></tr>
+          <tr><td>A, B, sandwich, D, C</td><td>2.718–2.755</td><td>Designed depth blocks</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The gap is not simply “random is always better”: the random layouts differ from one another, and the alternating baseline is competitive. The result is narrower and more useful: <strong>these particular depth-block schedules did not improve natural-text performance</strong>, while interleaved layouts occupied the top of this comparison.</p>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/f1_jumbo_valloss.png" alt="Bar chart comparing interleaved and depth-block layout losses">
+      <figcaption><b>The same comparison as a compact ranking.</b> Blue bars are interleaved or shuffled layouts; red bars are depth-block designs. Their losses are close in absolute terms, but the ordering is consistent with the seed-averaged results above.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/learning_curves.png" alt="Training and validation losses over optimization steps">
+      <figcaption><b>Learning curves.</b> Training loss is plotted on a log scale at left; validation loss is at right. The validation curves stay close and do not show a late dramatic reversal. Rand1 and the alternating baseline finish slightly below C, consistent with the final ranking. These curves show the training trajectory, not uncertainty across seeds.</figcaption>
+    </figure>
+  </section>
+
+  <section id="task">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Does the task change which layout wins?</h2></div>
+    <p>Yes, in at least one clear case. On a synthetic one-hop recall task, the model must use a repeated token association—roughly, if the sequence contains <code>a → b</code> and later asks about <code>a</code>, predict <code>b</code>. Here, attention at the ends (B and D) reaches nearly perfect exact-match recall, while A reaches 0.41.</p>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/synth_recall_em.png" alt="Exact-match recall for five layouts with error bars">
+      <figcaption><b>One-hop recall exact-match accuracy.</b> Higher is better. B and D reach 1.00, the baseline is about 0.95, C is about 0.68, and A is about 0.41. The error bars show substantial variability for A and C, so the strongest takeaway is the large separation between attention-at-the-ends and layout A in this run set—not a precise ranking of every neighboring score.</figcaption>
+    </figure>
+    <p>The other synthetic tasks are less discriminating. All layouts saturate the local-rule task at exact match 1.00, and all are near-saturated on the two-hop task (0.992–0.998). When every layout solves a task, that task cannot tell us much about which arrangement is better.</p>
+    <div class="takeaway">
+      <div class="label">What this answers</div>
+      <strong>There is no universal winner in these experiments.</strong> Interleaving is strongest on the natural-text comparison, while attention at both ends is especially effective for this one-hop recall pattern. A schedule should be judged against its target task, not treated as an architectural law.
+    </div>
+  </section>
+
+  <section id="probes">
+    <div class="sec-head"><span class="sec-num">05</span><h2>What do the layer probes tell us?</h2></div>
+    <p>We also inspected trained models to understand how computation changes with depth. These probes are descriptive: they can reveal patterns consistent with a mechanism, but they do not by themselves prove that a particular layer causes a performance difference.</p>
+    <h3>When does a layer use context?</h3>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/ctx_sens_jumbo.png" alt="Context sensitivity by sublayer for baseline and C on edu_mix">
+      <figcaption><b>Context sensitivity on <code>Fineweb Edu</code>.</b> The score measures the relative change in a sublayer’s output when earlier tokens are scrambled. The baseline responds across much of the stack. For C, the score stays near zero through the first 12 sublayers, then rises. This is consistent with its MLP-only beginning delaying access to attention-mediated context; it is not a direct measurement of “understanding.”</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/ctx_sensitivity_edumix.png" alt="Context sensitivity by layer with early, middle, and late bands">
+      <figcaption><b>The same natural-text pattern with depth bands marked.</b> Baseline sensitivity rises gradually. C remains insensitive through its early MLP-only section and increases once attention appears. The shaded labels are simply early, middle, and late regions of the 48-sublayer stack; the plot does not establish that these are universal functional stages.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/ctx_sens_recall.png" alt="Context sensitivity by sublayer for A, B, and baseline on recall">
+      <figcaption><b>Context sensitivity on one-hop recall.</b> The three layouts have different profiles: B shows strong early sensitivity, A rises later, and the baseline is comparatively steady before dropping near the end. This supports the idea that their access to context differs by depth. Read alongside the accuracy result, it offers a plausible clue—not a causal proof—for why these layouts perform differently.</figcaption>
+    </figure>
+    <h3>How early does the answer become readable?</h3>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/logit_lens_jumbo.png" alt="Logit-lens loss by sublayer for baseline and C">
+      <figcaption><b>Logit lens on the natural-text model.</b> At each depth, the current residual stream is decoded as if it were the final representation; lower loss means the next-token distribution is already more predictive. Both layouts improve over depth. The baseline begins with a very poor first-layer readout, while C starts lower and the curves converge later. Intermediate readouts are diagnostic views, not the model’s actual predictions at those layers.</figcaption>
+    </figure>
+    <h3>Which sublayers matter when removed?</h3>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/ablation_jumbo.png" alt="Validation loss change after zeroing each sublayer">
+      <figcaption><b>Single-sublayer ablation.</b> The vertical axis is the change in validation loss after zeroing one sublayer; larger positive values mean that intervention hurts more. The baseline’s first attention sublayer has a very large effect, and C’s first MLP sublayer also matters. Most later single-sublayer interventions are small. Ablation measures sensitivity to this particular intervention, not a layer’s standalone contribution or importance during normal operation.</figcaption>
+    </figure>
+    <h3>How much does each sublayer change the stream?</h3>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/delta_rms.png" alt="Residual-stream change magnitude by sublayer on a log scale">
+      <figcaption><b>Per-sublayer delta RMS at the final training step.</b> This is the root-mean-square size of each sublayer’s change to the residual stream, on a logarithmic scale. The curves generally rise toward later depth, with local variation across layouts. A larger update is not automatically more useful; this plot describes update magnitude, not quality or causal importance.</figcaption>
+    </figure>
+    <h3>Can the model learn a recognizable copying pattern?</h3>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/induction.png" alt="Induction accuracy and loss gap across layouts">
+      <figcaption><b>Induction-head probe on <code>Fineweb Edu</code>.</b> The probe tests whether the model can complete a repeated pattern, <code>x … y … x → y</code>. The left panel reports induction accuracy; the right reports the loss gap between random and repeated contexts. B and sandwich score notably higher than A and C on both measures. This is consistent with the recall advantage of layouts that put attention near the ends, but the probe is evidence of an association, not proof that induction alone explains recall.</figcaption>
+    </figure>
+    <div class="takeaway">
+      <div class="label">How to read the probes</div>
+      The measurements show that layouts alter where context sensitivity, prediction quality, and update size appear. Together they make the task results easier to interpret. They do not justify assigning a fixed “job title” to every depth band: the probes are approximate and interact with computation from earlier layers.
+    </div>
+  </section>
+
+  <section id="fewer-attention">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Can we use fewer attention sublayers?</h2></div>
+    <p>A separate experiment held the stack at 48 sublayers while replacing some attention sublayers with MLPs. Width was adjusted so parameter counts stayed within 0.02% of baseline; FLOPs were measured rather than inferred from the layer count.</p>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/f2_curve.png" alt="Validation loss by attention sublayer count">
+      <figcaption><b>Mean validation loss across three seeds.</b> The 24-attention baseline is 2.703. Variants with 20, 16, and 12 attention sublayers score 2.706, 2.705, and 2.708 respectively. The differences are small relative to the uncertainty in this small run set; the chart supports “little observed quality change,” not exact equivalence.</figcaption>
+    </figure>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/f2_efficiency.png" alt="Validation loss with error bars across attention counts">
+      <figcaption><b>Quality variation and FLOP trade-off.</b> The error bars overlap substantially across the four configurations. Reducing attention from 24 to 20, 16, and 12 sublayers lowers measured FLOPs by 1.2%, 2.4%, and 3.6%, respectively, at nearly matched parameter counts. The plotted means suggest a modest cost in validation loss, but three seeds are not enough to establish that the variants are interchangeable.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Attention sublayers</th><th>MLP sublayers</th><th>Validation loss</th><th>FLOPs vs. baseline</th></tr></thead>
+        <tbody>
+          <tr><td>24</td><td>24</td><td>2.703</td><td>Baseline</td></tr>
+          <tr><td>20</td><td>28</td><td>2.706</td><td>−1.2%</td></tr>
+          <tr><td>16</td><td>32</td><td>2.705</td><td>−2.4%</td></tr>
+          <tr><td>12</td><td>36</td><td>2.708</td><td>−3.6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="caveat">
+      <div class="label">How far does this efficiency result go?</div>
+      These runs use sequence length 256 and width 512. At this context length, attention is only part of total computation, so the measured FLOP savings are modest. Longer contexts may change the trade-off, and this study does not measure memory use or establish performance at larger scales.
+    </div>
+  </section>
+
+  <section id="depths">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Does the natural-text pattern hold at other depths?</h2></div>
+    <p>The broad split persists in the 16-, 32-, and 48-sublayer sweeps: designed layout C is last at all three depths, and the strongest results come from the interleaved group. The exact winner changes—baseline at 16, sandwich at 32, and rand1 at 48—so these experiments do not identify one universally optimal ordering.</p>
+    <figure>
+      <img src="/portfolio/content/posts/layout_schedule/f1_depth.png" alt="Validation losses for layouts at 16, 32, and 48 sublayers">
+      <figcaption><b>Layout ranking across depth.</b> Each panel shows validation loss for a different stack depth. The values and ranks shift, but the depth-block schedules do not displace the interleaved group as a whole. Treat close rankings cautiously: this figure shows the measured sweep, not a multi-seed confidence interval for every bar.</figcaption>
+    </figure>
+  </section>
+
+  <section id="answer">
+    <div class="sec-head"><span class="sec-num">08</span><h2>So, what is the answer?</h2></div>
+    <p><strong>Attention and MLP placement matters, but the useful arrangement depends on the workload.</strong> In this study, interleaving is the safest choice for natural text: the alternating baseline is competitive, and several shuffled interleavings do better than the hand-designed blocks. On the one-hop recall task, attention near both ends is much better than attention concentrated in the middle.</p>
+    <p>Reducing attention count is another plausible lever. Up to half the attention sublayers were replaced with MLPs with only a small observed change in validation loss and a modest reduction in measured FLOPs. That is encouraging evidence for this model size and context—not a guarantee that attention can be removed freely in other settings.</p>
+    <!-- <h3>What should readers keep in mind?</h3>
+    <ul>
+      <li><strong>Scale:</strong> models range from 8M to 80M parameters and use sequence length 256. Larger models or longer contexts may behave differently.</li>
+      <li><strong>Seeds:</strong> the main 48-sublayer comparison uses three seeds per layout. The measured noise floor helps contextualize effects, but estimates remain limited.</li>
+      <li><strong>Coverage:</strong> the natural-text result uses one corpus, and the clear synthetic contrast is one-hop recall. Other data and tasks may favor other schedules.</li>
+      <li><strong>Probes:</strong> context sensitivity, logit lens, and ablation are useful diagnostics with limitations. They do not isolate causal function perfectly.</li>
+      <li><strong>Compute:</strong> reported FLOPs are measured, but memory and wall-clock speed are not the focus of this comparison.</li>
+    </ul> -->
+  </section>
+
+</div>
