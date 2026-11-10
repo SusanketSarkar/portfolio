@@ -60,6 +60,23 @@
 .layout tbody td{padding:8px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);vertical-align:top}
 .layout tbody tr:last-child td{border-bottom:0}
 .layout tbody tr:hover td{background:var(--bg-elevated)}
+.layout tbody td strong{color:var(--text-col-2)}
+
+.layout th abbr{
+  text-decoration:underline dotted var(--text-col-1-faint);
+  text-underline-offset:3px;
+  cursor:help;
+}
+.layout th abbr:hover,
+.layout th abbr:focus-visible{
+  color:var(--text-col-2);
+  text-decoration-color:var(--text-col-2);
+  outline:none;
+}
+.layout th abbr:focus-visible{
+  box-shadow:0 0 0 2px var(--text-col-2-dim);
+  border-radius:3px;
+}
 
 .layout ul,
 .layout ol{padding-left:22px;margin:.7rem 0}
@@ -67,6 +84,51 @@
 
 .layout .post-footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-col-1-faint);font-size:.85rem}
 .layout .post-footer p{margin:.6rem 0}
+
+/* custom popup for appendix column headers */
+.layout-tip{
+  position:fixed;
+  z-index:120;
+  min-width:170px;
+  max-width:280px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border-strong);
+  border-radius:8px;
+  padding:9px 11px;
+  pointer-events:none;
+  font-family:var(--mono);
+  font-size:11px;
+  line-height:1.5;
+  color:var(--text-col-1);
+  box-shadow:0 10px 30px rgba(0,0,0,.16);
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity .14s ease, transform .14s ease;
+}
+.layout-tip.show{opacity:1;transform:translateY(0)}
+.layout-tip .tip-row{display:flex;gap:8px;align-items:baseline}
+.layout-tip .tip-row + .tip-row{margin-top:5px}
+.layout-tip .tip-k{flex:0 0 auto;color:var(--text-col-1-faint);text-transform:uppercase;letter-spacing:.08em;font-size:9.5px}
+.layout-tip .tip-v{color:var(--text-col-1)}
+.layout-tip::after{
+  content:"";
+  position:absolute;
+  left:var(--arrow-left,50%);
+  bottom:-5px;
+  width:8px;
+  height:8px;
+  transform:translateX(-50%) rotate(45deg);
+  background:var(--bg-elevated);
+  border-right:1px solid var(--border-strong);
+  border-bottom:1px solid var(--border-strong);
+}
+.layout-tip.below::after{
+  bottom:auto;
+  top:-5px;
+  border:0;
+  border-left:1px solid var(--border-strong);
+  border-top:1px solid var(--border-strong);
+}
 
 @media (max-width:720px){
   .layout table{min-width:0}
@@ -76,15 +138,13 @@
 <div class="layout">
 
   <header class="intro">
-    <p class="kicker">ML research note · transformer architecture</p>
-    <p class="lead">A controlled study of layer order: when does the familiar alternating pattern help, and when does a task reward a different schedule?</p>
-    <p class="meta">Models: 8.3M / 31.5M / 80.1M parameters · Natural text and synthetic tasks · 143 runs across seven sweeps · Single-CPU study</p>
+    <p class="lead">I test how layer order affects language modeling: when does the familiar alternating pattern help, and when does a task reward a different schedule?</p>
     <div class="rule"></div>
   </header>
 
   <div class="tldr">
     <div class="label">TL;DR</div>
-    <p><strong>The best arrangement depends on the task.</strong> On the natural-text <code>Fineweb Edu</code> benchmark, interleaved layouts form the strongest group; none of the five hand-designed depth-block layouts beats the four random interleavings. The standard alternating layout is a solid default, though it is not the single best run.</p>
+    <p><strong>The best arrangement depends on the task.</strong> On the natural-text <code>edu_mix</code> benchmark, interleaved layouts form the strongest group; none of the five hand-designed depth-block layouts beats the four random interleavings. The standard alternating layout is a solid default, though it is not the single best run.</p>
     <p>On a synthetic one-hop recall task, putting attention near both ends of the network performs much better than concentrating it in the middle. Separately, replacing up to half the attention sublayers with MLP sublayers changes natural-text validation loss only slightly in these experiments, while measured FLOPs fall by 1.2–3.6%.</p>
     <p><strong>Practical answer:</strong> keep attention and MLPs interleaved for broad language modeling unless you have evidence for a task-specific schedule. For efficiency, reducing attention count is a promising option at this scale—but the savings and quality trade-off need rechecking at longer contexts and larger models.</p>
   </div>
@@ -93,9 +153,9 @@
     <div class="sec-head"><span class="sec-num">01</span><h2>What question does this experiment answer?</h2></div>
     <p>A transformer layer combines two operations. <strong>Attention</strong> lets one token use information from other positions. An <strong>MLP</strong> transforms features at each position independently. The usual GPT layout alternates them:</p>
     <div class="eq">… → attention → MLP → attention → MLP → …</div>
-    <p>Could a model do better if these operations were arranged differently by depth—for example, with attention concentrated in the middle or at the ends? And if a layout change does matter, does the answer depend on what the model is asked to do?</p>
-    <p>We tested two distinct ideas. First, we rearranged the same number of attention and MLP sublayers, so parameter count and operation counts stayed fixed. Second, we reduced the number of attention sublayers and added MLP sublayers, matching parameters and measuring FLOPs. The first tests <em>where</em> operations go; the second tests whether some attention can be removed.</p>
-    <p>The comparisons use a common layout mechanism, including for the alternating baseline, to keep initialization and implementation consistent. The main natural-text experiment uses 48 sublayers (24 attention and 24 MLP), an 80.1M-parameter model, and three random seeds per layout. Smaller 16- and 32-sublayer runs check whether the broad pattern changes with depth.</p>
+    <p>I ask whether a model does better when these operations are arranged differently by depth—for example, with attention concentrated in the middle or at the ends. I also ask whether the answer changes with the task.</p>
+    <p>I tested two distinct ideas. First, we rearranged the same number of attention and MLP sublayers, so parameter count and operation counts stayed fixed. Second, we reduced the number of attention sublayers and added MLP sublayers, matching parameters and measuring FLOPs. The first tests <em>where</em> operations go; the second tests whether some attention can be removed.</p>
+    <p>I used a common layout mechanism for the comparisons, including for the alternating baseline, to keep initialization and implementation consistent. My main natural-text experiment uses 48 sublayers (24 attention and 24 MLP), an 80.1M-parameter model, and three random seeds per layout. Smaller 16- and 32-sublayer runs check whether the broad pattern changes with depth.</p>
   </section>
 
   <section id="layouts">
@@ -110,7 +170,7 @@
 
   <section id="natural-text">
     <div class="sec-head"><span class="sec-num">03</span><h2>On natural text, does a designed schedule beat interleaving?</h2></div>
-    <p>For the main comparison, each layout was trained on <code>Fineweb Edu</code> and evaluated by validation loss (lower is better). Across the ten layouts, all four random interleavings beat all five designed depth-block layouts. The usual alternating baseline also lands in the stronger group.</p>
+    <p>For my main comparison, I trained each layout on <code>edu_mix</code> and evaluated by validation loss (lower is better). Across the ten layouts, all four random interleavings beat all five designed depth-block layouts. The usual alternating baseline also lands in the stronger group.</p>
     <figure>
       <img src="/portfolio/content/posts/layout_schedule/noise_floor.png" alt="Validation loss for ten layouts with seed variation">
       <figcaption><b>Validation loss and seed variation.</b> Bars show the mean across three seeds; error bars show the across-seed standard deviation. The lowest-loss layout is rand1 (2.680) and the highest is C (2.755), a difference of 0.076. The dashed line marks the measured noise floor used in the analysis. The separation between the best and worst layouts is much larger than that noise estimate, though this does not make every pairwise ranking statistically decisive.</figcaption>
@@ -136,11 +196,12 @@
       <img src="/portfolio/content/posts/layout_schedule/learning_curves.png" alt="Training and validation losses over optimization steps">
       <figcaption><b>Learning curves.</b> Training loss is plotted on a log scale at left; validation loss is at right. The validation curves stay close and do not show a late dramatic reversal. Rand1 and the alternating baseline finish slightly below C, consistent with the final ranking. These curves show the training trajectory, not uncertainty across seeds.</figcaption>
     </figure>
+    <p>At the end, I include a prompt-by-prompt appendix with next-token distributions, greedy completions, canonical-continuation scores, and sampled prose. Those examples add a qualitative view of the same checkpoints, while also showing why individual prompts should not replace the corpus-level comparison.</p>
   </section>
 
   <section id="task">
     <div class="sec-head"><span class="sec-num">04</span><h2>Does the task change which layout wins?</h2></div>
-    <p>Yes, in at least one clear case. On a synthetic one-hop recall task, the model must use a repeated token association—roughly, if the sequence contains <code>a → b</code> and later asks about <code>a</code>, predict <code>b</code>. Here, attention at the ends (B and D) reaches nearly perfect exact-match recall, while A reaches 0.41.</p>
+    <p>In at least one clear case, yes. On a synthetic one-hop recall task, the model must use a repeated token association—roughly, if the sequence contains <code>a → b</code> and later asks about <code>a</code>, predict <code>b</code>. Here, attention at the ends (B and D) reaches nearly perfect exact-match recall, while A reaches 0.41.</p>
     <figure>
       <img src="/portfolio/content/posts/layout_schedule/synth_recall_em.png" alt="Exact-match recall for five layouts with error bars">
       <figcaption><b>One-hop recall exact-match accuracy.</b> Higher is better. B and D reach 1.00, the baseline is about 0.95, C is about 0.68, and A is about 0.41. The error bars show substantial variability for A and C, so the strongest takeaway is the large separation between attention-at-the-ends and layout A in this run set—not a precise ranking of every neighboring score.</figcaption>
@@ -154,11 +215,11 @@
 
   <section id="probes">
     <div class="sec-head"><span class="sec-num">05</span><h2>What do the layer probes tell us?</h2></div>
-    <p>We also inspected trained models to understand how computation changes with depth. These probes are descriptive: they can reveal patterns consistent with a mechanism, but they do not by themselves prove that a particular layer causes a performance difference.</p>
+    <p>I also inspected trained models to understand how computation changes with depth. These probes are descriptive: they can reveal patterns consistent with a mechanism, but they do not by themselves prove that a particular layer causes a performance difference.</p>
     <h3>When does a layer use context?</h3>
     <figure>
       <img src="/portfolio/content/posts/layout_schedule/ctx_sens_jumbo.png" alt="Context sensitivity by sublayer for baseline and C on edu_mix">
-      <figcaption><b>Context sensitivity on <code>Fineweb Edu</code>.</b> The score measures the relative change in a sublayer’s output when earlier tokens are scrambled. The baseline responds across much of the stack. For C, the score stays near zero through the first 12 sublayers, then rises. This is consistent with its MLP-only beginning delaying access to attention-mediated context; it is not a direct measurement of “understanding.”</figcaption>
+      <figcaption><b>Context sensitivity on <code>edu_mix</code>.</b> The score measures the relative change in a sublayer’s output when earlier tokens are scrambled. The baseline responds across much of the stack. For C, the score stays near zero through the first 12 sublayers, then rises. This is consistent with its MLP-only beginning delaying access to attention-mediated context; it is not a direct measurement of “understanding.”</figcaption>
     </figure>
     <figure>
       <img src="/portfolio/content/posts/layout_schedule/ctx_sensitivity_edumix.png" alt="Context sensitivity by layer with early, middle, and late bands">
@@ -186,7 +247,7 @@
     <h3>Can the model learn a recognizable copying pattern?</h3>
     <figure>
       <img src="/portfolio/content/posts/layout_schedule/induction.png" alt="Induction accuracy and loss gap across layouts">
-      <figcaption><b>Induction-head probe on <code>Fineweb Edu</code>.</b> The probe tests whether the model can complete a repeated pattern, <code>x … y … x → y</code>. The left panel reports induction accuracy; the right reports the loss gap between random and repeated contexts. B and sandwich score notably higher than A and C on both measures. This is consistent with the recall advantage of layouts that put attention near the ends, but the probe is evidence of an association, not proof that induction alone explains recall.</figcaption>
+      <figcaption><b>Induction-head probe on <code>edu_mix</code>.</b> The probe tests whether the model can complete a repeated pattern, <code>x … y … x → y</code>. The left panel reports induction accuracy; the right reports the loss gap between random and repeated contexts. B and sandwich score notably higher than A and C on both measures. This is consistent with the recall advantage of layouts that put attention near the ends, but the probe is evidence of an association, not proof that induction alone explains recall.</figcaption>
     </figure>
     <div class="takeaway">
       <div class="label">How to read the probes</div>
@@ -196,7 +257,7 @@
 
   <section id="fewer-attention">
     <div class="sec-head"><span class="sec-num">06</span><h2>Can we use fewer attention sublayers?</h2></div>
-    <p>A separate experiment held the stack at 48 sublayers while replacing some attention sublayers with MLPs. Width was adjusted so parameter counts stayed within 0.02% of baseline; FLOPs were measured rather than inferred from the layer count.</p>
+    <p>In a separate experiment, I held the stack at 48 sublayers while replacing some attention sublayers with MLPs. Width was adjusted so parameter counts stayed within 0.02% of baseline; FLOPs were measured rather than inferred from the layer count.</p>
     <figure>
       <img src="/portfolio/content/posts/layout_schedule/f2_curve.png" alt="Validation loss by attention sublayer count">
       <figcaption><b>Mean validation loss across three seeds.</b> The 24-attention baseline is 2.703. Variants with 20, 16, and 12 attention sublayers score 2.706, 2.705, and 2.708 respectively. The differences are small relative to the uncertainty in this small run set; the chart supports “little observed quality change,” not exact equivalence.</figcaption>
@@ -235,14 +296,150 @@
     <div class="sec-head"><span class="sec-num">08</span><h2>So, what is the answer?</h2></div>
     <p><strong>Attention and MLP placement matters, but the useful arrangement depends on the workload.</strong> In this study, interleaving is the safest choice for natural text: the alternating baseline is competitive, and several shuffled interleavings do better than the hand-designed blocks. On the one-hop recall task, attention near both ends is much better than attention concentrated in the middle.</p>
     <p>Reducing attention count is another plausible lever. Up to half the attention sublayers were replaced with MLPs with only a small observed change in validation loss and a modest reduction in measured FLOPs. That is encouraging evidence for this model size and context—not a guarantee that attention can be removed freely in other settings.</p>
-    <!-- <h3>What should readers keep in mind?</h3>
+  </section>
+
+  <section id="caveats">
+    <div class="sec-head"><span class="sec-num">09</span><h2>What should readers keep in mind?</h2></div>
     <ul>
       <li><strong>Scale:</strong> models range from 8M to 80M parameters and use sequence length 256. Larger models or longer contexts may behave differently.</li>
       <li><strong>Seeds:</strong> the main 48-sublayer comparison uses three seeds per layout. The measured noise floor helps contextualize effects, but estimates remain limited.</li>
       <li><strong>Coverage:</strong> the natural-text result uses one corpus, and the clear synthetic contrast is one-hop recall. Other data and tasks may favor other schedules.</li>
       <li><strong>Probes:</strong> context sensitivity, logit lens, and ablation are useful diagnostics with limitations. They do not isolate causal function perfectly.</li>
       <li><strong>Compute:</strong> reported FLOPs are measured, but memory and wall-clock speed are not the focus of this comparison.</li>
-    </ul> -->
+    </ul>
   </section>
 
+  <section id="appendix">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Appendix: what do the models actually predict?</h2></div>
+    <p>To make the aggregate scores more tangible, I compared all ten Family 1 jumbo checkpoints on the same six prompts. These are best-checkpoint, seed-0 snapshots, ordered in the source comparison by overall <code>edu_mix</code> validation loss. They are qualitative examples, not an additional benchmark: one prompt can favor a layout that is not best on the corpus as a whole.</p>
+    <p>I report canonical-continuation NLL (average nats per token; lower is better) below. The correct continuation is fixed for each prompt: <em>east</em>, <em>winter</em>, <em>Paris</em>, <em>7</em>, <em>dog</em>, and <em>mat</em>, respectively. In the original score sheets, whole-string probabilities are rounded to one decimal place, so a displayed 0.0% can still be nonzero.</p>
+    <p><strong>Prompt key</strong> (hover or focus a column heading for the same details): “The sun rises in the” → <em>east</em>; “Spring, summer, autumn,” → <em>winter</em>; “The capital of France is” → <em>Paris</em>; “If you have 3 apples and someone gives you 4 more, you have” → <em>7</em>; “The dog chased the cat around the yard. The cat ran away because the” → <em>dog</em>; “The cat sat on the mat. The dog sat on the” → <em>mat</em>.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Layout</th><th><abbr tabindex="0" title="Prompt: The sun rises in the | Intended next text: east">Sun → east</abbr></th><th><abbr tabindex="0" title="Prompt: Spring, summer, autumn, | Intended next text: winter">Seasons → winter</abbr></th><th><abbr tabindex="0" title="Prompt: The capital of France is | Intended next text: Paris">France → Paris</abbr></th><th><abbr tabindex="0" title="Prompt: If you have 3 apples and someone gives you 4 more, you have | Intended next text: 7">Apples → 7</abbr></th><th><abbr tabindex="0" title="Prompt: The dog chased the cat around the yard. The cat ran away because the | Intended next text: dog">Coreference → dog</abbr></th><th><abbr tabindex="0" title="Prompt: The cat sat on the mat. The dog sat on the | Intended next text: mat">Induction → mat</abbr></th></tr></thead>
+        <tbody>
+          <tr><td>Baseline</td><td>2.580</td><td>2.455</td><td>3.605</td><td>4.276</td><td>1.335</td><td>0.035</td></tr>
+          <tr><td>A · MLP ends</td><td>2.676</td><td>2.232</td><td>3.684</td><td>4.269</td><td>1.647</td><td>0.035</td></tr>
+          <tr><td>B · attention ends</td><td>2.289</td><td>2.208</td><td>3.703</td><td>4.315</td><td>1.362</td><td>0.025</td></tr>
+          <tr><td>C · MLP-only ends</td><td>2.276</td><td>1.995</td><td>3.497</td><td>4.808</td><td>1.262</td><td>0.077</td></tr>
+          <tr><td>D · attention-only ends</td><td>2.633</td><td>2.095</td><td>3.652</td><td>4.389</td><td>1.093</td><td>0.159</td></tr>
+          <tr><td>Sandwich</td><td><strong>1.999</strong></td><td><strong>1.942</strong></td><td>4.016</td><td><strong>3.979</strong></td><td>1.264</td><td><strong>0.016</strong></td></tr>
+          <tr><td>rand0</td><td>2.304</td><td>2.204</td><td>3.614</td><td>4.569</td><td>1.251</td><td>0.182</td></tr>
+          <tr><td>rand1</td><td>2.453</td><td>2.421</td><td><strong>3.495</strong></td><td>5.562</td><td><strong>0.580</strong></td><td>0.356</td></tr>
+          <tr><td>rand2</td><td>2.705</td><td>2.352</td><td>3.567</td><td>4.257</td><td>0.874</td><td>0.141</td></tr>
+          <tr><td>rand3</td><td>2.116</td><td>2.309</td><td>3.775</td><td>4.009</td><td>0.995</td><td>0.059</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The lowest score changes with the prompt: sandwich leads on the sun, seasons, apples, and induction continuations; rand1 leads on the France and coreference continuations. This prompt-level variation echoes the main result: layout rankings depend on what is being measured. It also warns against treating a few hand-picked completions as a substitute for validation loss across a corpus.</p>
+
+    <h3>What was each layout’s top next-token guess?</h3>
+    <p>The table gives the top-1 token and its probability for each prompt. These are not the canonical NLL scores above: they show only the single most likely next token. Several prompts reveal a mismatch between a fluent or common continuation and the specific reference answer.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Layout</th><th><abbr tabindex="0" title="Prompt: The sun rises in the | Intended next text: east">Sun → east</abbr></th><th><abbr tabindex="0" title="Prompt: Spring, summer, autumn, | Intended next text: winter">Seasons → winter</abbr></th><th><abbr tabindex="0" title="Prompt: The capital of France is | Intended next text: Paris">France → Paris</abbr></th><th><abbr tabindex="0" title="Prompt: If you have 3 apples and someone gives you 4 more, you have | Intended next text: 7">Apples → 7</abbr></th><th><abbr tabindex="0" title="Prompt: The dog chased the cat around the yard. The cat ran away because the | Intended next text: dog">Coreference → dog</abbr></th><th><abbr tabindex="0" title="Prompt: The cat sat on the mat. The dog sat on the | Intended next text: mat">Induction → mat</abbr></th></tr></thead>
+        <tbody>
+          <tr><td>Baseline</td><td>sky (34%)</td><td>and (29%)</td><td>the (26%)</td><td>to (16%)</td><td>cat (44%)</td><td>mat (97%)</td></tr>
+          <tr><td>A · MLP ends</td><td>sky (59%)</td><td>and (53%)</td><td>the (17%)</td><td>3 (15%)</td><td>cat (58%)</td><td>mat (97%)</td></tr>
+          <tr><td>B · attention ends</td><td>sky (21%)</td><td>and (27%)</td><td>the (12%)</td><td>3 (11%)</td><td>cat (65%)</td><td>mat (98%)</td></tr>
+          <tr><td>C · MLP-only ends</td><td>sky (72%)</td><td>and (26%)</td><td>the (19%)</td><td>to (20%)</td><td>dog (47%)</td><td>mat (93%)</td></tr>
+          <tr><td>D · attention-only ends</td><td>sky (21%)</td><td>summer (25%)</td><td>the (11%)</td><td>4 (23%)</td><td>dog (46%)</td><td>mat (85%)</td></tr>
+          <tr><td>Sandwich</td><td>sky (37%)</td><td>aut… (21%)</td><td>the (16%)</td><td>a (10%)</td><td>cat (39%)</td><td>mat (98%)</td></tr>
+          <tr><td>rand0</td><td>sky (28%)</td><td>and (28%)</td><td>the (24%)</td><td>to (14%)</td><td>cat (59%)</td><td>mat (83%)</td></tr>
+          <tr><td>rand1</td><td>sky (43%)</td><td>and (24%)</td><td>the (24%)</td><td>to (24%)</td><td>dog (55%)</td><td>mat (70%)</td></tr>
+          <tr><td>rand2</td><td>sky (49%)</td><td>and (26%)</td><td>the (17%)</td><td>3 (12%)</td><td>dog (49%)</td><td>mat (87%)</td></tr>
+          <tr><td>rand3</td><td>sky (18%)</td><td>summer (28%)</td><td>the (16%)</td><td>to (10%)</td><td>dog (49%)</td><td>mat (94%)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What do the next-token distributions show?</h3>
+    <p>For several prompts, the correct answer is not the most likely next token for any layout. For “The sun rises in the,” the top prediction is <em>sky</em> across the board, even though the scored canonical continuation is <em>east</em>. For “The capital of France is,” layouts mostly favor <em>the</em>, beginning a familiar phrase rather than directly predicting <em>Paris</em>. On the coreference prompt, the intended answer is <em>dog</em>, but many models favor <em>cat</em>. These examples show why I include teacher-forced NLL alongside top-1 predictions: NLL measures how much probability the model assigns to the full reference continuation, even when another token wins the argmax.</p>
+    <p>On the induction prompt (“The cat sat on the mat. The dog sat on the”), every layout puts <em>mat</em> first, with probabilities from 70% to 98%. That is a much easier prompt for these checkpoints than the factual and coreference examples. The longer sampled continuations are also revealing but noisy: with a fixed sampling seed they differ across layouts, and some repeat phrases or drift off-topic. I treat them as illustrations of generation style, not as reliable quality rankings.</p>
+    <div class="caveat">
+      <div class="label">How to interpret this appendix</div>
+      These examples come from one seed and one checkpoint per layout, and the prompts were selected for illustration. They are useful for seeing concrete behavior, but they cannot establish general superiority. The corpus-level, multi-seed validation results in the main article remain the basis for the broad natural-text comparison.
+    </div>
+  </section>
+
+  <div class="post-footer">
+    <p>I ran this small-scale controlled study of sublayer ordering and attention count. The results support a practical default—interleave for broad text modeling—and a research direction: test task-specific schedules and attention reductions against the actual workload.</p>
+  </div>
+
 </div>
+
+<script>
+(function () {
+  var root = document.querySelector(".layout");
+  if (!root || root.getAttribute("data-tips-bound")) return;
+  root.setAttribute("data-tips-bound", "1");
+
+  var tip = document.createElement("div");
+  tip.className = "layout-tip";
+  tip.setAttribute("role", "tooltip");
+  document.body.appendChild(tip);
+
+  var active = null;
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function render(el) {
+    var raw = el.getAttribute("data-tip") || "";
+    var parts = raw.split("|");
+    var prompt = (parts[0] || "").replace(/^\s*Prompt:\s*/, "").trim();
+    var next = (parts[1] || "").replace(/^\s*Intended next text:\s*/, "").trim();
+    var html = '<div class="tip-row"><span class="tip-k">Prompt</span><span class="tip-v">' + escapeHtml(prompt) + "</span></div>";
+    if (next) {
+      html += '<div class="tip-row"><span class="tip-k">Next</span><span class="tip-v">' + escapeHtml(next) + "</span></div>";
+    }
+    tip.innerHTML = html;
+  }
+
+  function show(el) {
+    active = el;
+    render(el);
+    var r = el.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var below = false;
+    var top = r.top - th - 10;
+    if (top < 8) {
+      top = r.bottom + 10;
+      below = true;
+    }
+    var left = r.left + r.width / 2 - tw / 2;
+    left = Math.max(8, Math.min(window.innerWidth - tw - 8, left));
+    var arrow = Math.max(12, Math.min(tw - 12, r.left + r.width / 2 - left));
+    tip.style.setProperty("--arrow-left", arrow + "px");
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+    tip.classList.toggle("below", below);
+    tip.classList.add("show");
+  }
+
+  function hide() {
+    active = null;
+    tip.classList.remove("show");
+  }
+
+  var abbrs = root.querySelectorAll("table th abbr[title]");
+  Array.prototype.forEach.call(abbrs, function (el) {
+    var text = el.getAttribute("title");
+    el.setAttribute("data-tip", text);
+    el.setAttribute("aria-label", text);
+    el.removeAttribute("title");
+
+    el.addEventListener("mouseenter", function () { show(el); });
+    el.addEventListener("mouseleave", hide);
+    el.addEventListener("focus", function () { show(el); });
+    el.addEventListener("blur", hide);
+  });
+
+  window.addEventListener("scroll", hide, { passive: true });
+  window.addEventListener("resize", hide);
+})();
+</script>
