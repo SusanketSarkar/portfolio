@@ -73,6 +73,17 @@
       "format": "html",
       "headerImage": "/portfolio/content/posts/layout_schedule/cover.jpg",
       "headerCaption": "The Course of Empire: Consummation by Thomas Cole (1835)"
+    },
+    {
+      "slug": "layout_schedule_2",
+      "title": "Is there an optimal attention:MLP ratio in a decoder-only transformer?",
+      "date": "2026-11-10",
+      "excerpt": "I swept the attention:MLP split from 4:1 to 1:4 with everything else fixed, then separated the apparent ratio effect from the parameter-count effect hiding inside it.",
+      "tags": ["respresentation dynamics"],
+      "published": true,
+      "format": "html",
+      "headerImage": "/portfolio/content/posts/layout_schedule/cover.jpg",
+      "headerCaption": "Dream of Arcadia, by Thomas Cole (1838)"
     }
   ]
 }
