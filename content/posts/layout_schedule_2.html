@@ -119,7 +119,13 @@
   .layout table{min-width:0}
   .layout .strip .lab{width:100%}
 }
-</style>
+.layout .tasting{margin:52px 0 24px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg-elevated)}
+.layout .tasting summary{cursor:pointer;padding:16px 18px;font-family:var(--serif);font-size:1.2rem;font-weight:800;color:var(--text-col-1)}
+.layout .tasting summary::marker{color:var(--text-col-2)}
+.layout .tasting-content{padding:0 18px 18px}
+.layout .tasting h3{margin-top:1.2rem}
+.layout .tasting blockquote{margin:10px 0;padding:10px 14px;border-left:2px solid var(--border-strong);background:var(--bg-card);color:var(--text-col-1-dim)}
+.layout .tasting blockquote p{margin:.35rem 0}</style>
 
 <div class="layout">
 
@@ -330,6 +336,7 @@ MLP sublayer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 3&middot;d&middot;d_ff &nbsp; &asy
       branch of the hypothesis is, at first glance, dead.</p>
     </div>
 
+        <p class="small">For a qualitative companion to these validation curves, <a href="#tasting-menu">open the tasting menu appendix</a> at the end.</p>
     <div class="caveat">
       <div class="label">But hold on</div>
       <p>Remember &sect;2: on this grid, MLP-heavy = <strong>more parameters</strong>.
@@ -401,8 +408,8 @@ MLP sublayer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 3&middot;d&middot;d_ff &nbsp; &asy
     <p>And note the cross-task tension, which is the heart of the "task-dependent" branch: <strong>2:1 is the
     best ratio for language modelling (Fig. 2) but bimodal/unreliable for recall</strong> (mean 0.612, three
     runs below the pass bar), while <strong>1:1 &mdash; only slightly worse for LM (2.702 vs 2.690) &mdash; is the only
-    reliable ratio for recall.</strong> Different tasks, different optimal compositions. There is no single
-    universal ratio.</p>
+    reliable ratio for recall.</strong> Different tasks favor different compositions. I do not find one ratio that is best for both tasks.</p>
+    <p class="small">For examples from these same checkpoints, jump to the <a href="#tasting-menu">tasting menu appendix</a>.</p>
 
     <div class="takeaway">
       <div class="label">Takeaway (retrieval)</div>
@@ -636,6 +643,7 @@ raw gap (16A vs 38A) &nbsp;= 0.0744<br>
     global-search capability, while both the MLP-heavy and the attention-heavy extremes fail on some seeds.
     Conventional wisdom is right that you need sufficient capacity; it is wrong to think the attention:MLP
     ratio is the key dial for LM. <strong>For LM it is the size dial.</strong></p>
+    <p class="small">The <a href="#tasting-menu">tasting menu appendix</a> adds a few fixed-prompt examples to these aggregate results.</p>
   </section>
 
   <!-- ============================================================ 9 -->
@@ -667,18 +675,78 @@ raw gap (16A vs 38A) &nbsp;= 0.0744<br>
       <li><strong>The "genuine" ratio effect on LM is small and wiggly.</strong> At fixed size the pm curve is a shallow
       wiggle (16A and 32A both ~2.70, extremes slightly worse) &mdash; real but weak, and not a clean monotone
       story. I treat this as a small effect within the noise, not as evidence for a precise secondary optimum.</li>
-      <li><strong>No generation / qualitative metrics.</strong> I report loss + task EM. If attention-heavy models
-      differ in <i>how</i> they fail (e.g. worse long-range coherence at equal loss), that is not
-      characterised here.</li>
+      <li><strong>Qualitative samples are illustrative.</strong> The tasting menu at the end shows a few fixed-prompt generations, not a systematic generation-quality metric. I do not measure long-range coherence or compare prose quality across a broad prompt set.</li>
       <li><strong>Retrieval probes are synthetic and coarse.</strong> The stronger real-world probe is
       needle-in-haystack at long context; my recall task is a controlled stand-in. The direction of the
       finding (balanced &gt; either extreme) is what I'd expect to transfer, but the exact 1:1 optimum could
       shift with a harder retrieval distribution.</li>
     </ul>
-  </section><div class="post-footer">
+  </section><details class="tasting" id="tasting-menu">
+  <summary>Appendix — A tasting menu of attention: what do the ratios sound like?</summary>
+  <div class="tasting-content">
+    <p>The main results tell me which configurations did well on validation loss and synthetic recall. Here I wanted to hear what the same models actually produced. I gave each variant the same four prompts and compared the continuations side by side.</p>
+    <p><strong>How I sampled:</strong> I used the best checkpoint for each of the seven core ratios, plus an approximately 80M parameter-matched 32A model and the 2.4M recall specialist. Each received the same prompts, sampled at temperature 0.8 with seed 7, for up to 80 new tokens. These are illustrative samples from individual checkpoints, not a systematic measure of writing quality. Generation used physical GPUs 0–2; GPU 3 was left idle.</p>
+    <div class="tablewrap"><table><thead><tr><th>#</th><th>Prompt</th><th>What I was looking for</th></tr></thead><tbody>
+      <tr><td>1</td><td>“Once upon a time, a small robot learned to bake bread.”</td><td>Free prose and scene-building</td></tr>
+      <tr><td>2</td><td>“Explain why the sky is blue.”</td><td>On-topic explanation</td></tr>
+      <tr><td>3</td><td>“Write a haiku about a lighthouse.”</td><td>A constrained writing prompt</td></tr>
+      <tr><td>4</td><td>“The secret code word is BANANA. My dog's name is Pickles. Tell me a short fact about my dog.”</td><td>Use of information supplied in context</td></tr>
+    </tbody></table></div>
+    <p>The excerpts below are verbatim. I have included only the most revealing parts, so this is a tasting flight rather than a full transcript.</p>
+    <h3>10A · 4:1 MLP:attention · 95M parameters</h3>
+    <blockquote><p><strong>Story:</strong> “He rolled his spinning around and around. He rolled his spinning around and around, seeing what was happening. He saw a big, sharp knife on the table.”</p><p><strong>Haiku prompt:</strong> “Would you agree with your ancestor on the first or second reading in order to help you better understand the story?”</p><p><strong>Memory prompt:</strong> “READ OF MORABUMPARAIN / Protecting a dog's owner from the realm of dog.”</p></blockquote>
+    <p><strong>Tasting note:</strong> It starts building a scene, but repeats itself almost immediately. The memory response does not recover either supplied fact.</p>
+    <h3>12A · 3:1 MLP:attention · 92.9M parameters</h3>
+    <blockquote><p><strong>Story:</strong> “He picked it up and started baking. He mixed the bread and placed it in the oven <em>to help it feel better</em>.”</p><p><strong>Haiku prompt:</strong> “If you need a fire, consider bushfires. — If you have a fire, check the fireplace fire.”</p><p><strong>Memory prompt:</strong> “…the birth, birth, and death of the father, <em>Sugar Jelly</em>.”</p></blockquote>
+    <p><strong>Tasting note:</strong> The continuations remain readable, but they wander: the bread needs cheering up, the haiku becomes fire-safety advice, and the memory answer invents a name.</p>
+    <h3>16A · 2:1 MLP:attention · 88.6M parameters · conventional mix</h3>
+    <blockquote><p><strong>Story:</strong> “They took the bread and baked the bread together with cheese and salt. Then they baked the bread and cooked the bread. The robot was so happy.”</p><p><strong>Sky prompt:</strong> “Light is coming out of a red light, but the sky is too dark to see. In fact, it is a very dark sky <em>because it is a blue light</em>.”</p><p><strong>Haiku prompt:</strong> “<em>Never miss a haiku smudge, a haiku, a haiku.</em>”</p><p><strong>Memory prompt:</strong> “OK, I can answer the question, 'What is the secret code word for?'”</p></blockquote>
+    <p><strong>Tasting note:</strong> It stays conversational and engages with each prompt, even when its explanation is confused and its haiku loops back on itself.</p>
+    <h3>24A · 1:1 MLP:attention · 80.1M parameters · balanced</h3>
+    <blockquote><p><strong>Story:</strong> “He was so excited to cook it. He baked bread into a big bowl and put it in the jar… The robot agreed he would bake the bread for the next few days.”</p><p><strong>Haiku prompt:</strong> “A rose lighthouse with a light curtain.”</p><p><strong>Memory prompt:</strong> “<em>Pickles are the bugs</em> that cause different diseases…”</p></blockquote>
+    <p><strong>Tasting note:</strong> The prose holds together, and “a rose lighthouse with a light curtain” is unexpectedly evocative. On the memory prompt, though, the model latches onto “Pickles” and invents a fact instead of recalling the dog's name.</p>
+    <h3>32A · 1:2 MLP:attention · 71.6M parameters</h3>
+    <blockquote><p><strong>Story:</strong> “So he asked his friend, <em>a little girl named Lily</em>, if he was hungry. She said, 'I will help you bake it.'”</p><p><strong>Memory prompt:</strong> “My dog's name is <em>St. John's!</em> I'm a baby boy. My dog dog's name is St. John's.”</p></blockquote>
+    <p><strong>Tasting note:</strong> The story is still readable, but the memory answer confidently invents a proper noun. More attention in this sweep did not guarantee more reliable recall.</p>
+    <h3>36A · 1:3 MLP:attention · 67.3M parameters</h3>
+    <blockquote><p><strong>Story:</strong> “He added some berries. Then, he added some pastel leaves and <em>some some rest</em>.”</p><p><strong>Sky prompt:</strong> “…the name of the highwayman consists of a tall, narrow, and narrow road. The road is the form of a centre…”</p></blockquote>
+    <p><strong>Tasting note:</strong> The continuations start to lose their thread: a repeated fragment in the story, then a detour from the sky to a highway.</p>
+    <h3>38A · 1:4 MLP:attention · 65.2M parameters · attention-heavy</h3>
+    <blockquote><p><strong>Story:</strong> “They <em>bated</em> the bread together and made a big cake. The robot was so happy to have baked the meal.”</p><p><strong>Haiku prompt:</strong> “The haiku data could be <em>202.50</em>… it would be <em>127.75.00.00.00</em> that was 5.”</p><p><strong>Memory prompt:</strong> “I just saw the magic code word <em>BANANA or BANANA</em>.”</p></blockquote>
+    <p><strong>Tasting note:</strong> This is the strangest contrast in the flight. The haiku answer turns into number strings, but this is the only core model that repeats the supplied code word. It still does not give the dog's name, Pickles. In this one sample, literal recall of a salient token survives while the prose frays.</p>
+    <h3>Two bonus checkpoints</h3>
+    <h4>The parameter-matched twin · 32A at about 80M parameters</h4>
+    <blockquote><p><strong>Story:</strong> “He wanted to bake bread. But the robot liked it. It wanted a flourish. The robot said no. …He did not know that the robot would bake bread.”</p><p><strong>Memory prompt:</strong> “Pickles: Cut out a small piece of mint or a piece of mint from a large piece of mint.”</p></blockquote>
+    <p>This checkpoint has more attention sublayers than the balanced 24A model, but its MLPs are narrower to keep parameter count near 80M. Its sample remains prose rather than turning into number strings. That is consistent with the main control: once size is held roughly fixed, these examples do not show a clear, one-way change in voice from the ratio alone.</p>
+    <h4>The recall specialist · 1:1 · 2.4M parameters</h4>
+    <blockquote><p><strong>Story:</strong> <code>g3u0b5j8e7f1p2?g&gt;3 o8t8z1d2q6v4?q&gt;6 i8h1?i&gt;8</code></p><p><strong>Sky prompt:</strong> <code>r0?b&gt;&gt;0 w5c1n0p4?w&gt;5 w8x6e3a3?x&gt;6</code></p><p><strong>Haiku prompt:</strong> <code>4?s&gt;9 g5m4k1p1d1x3?k&gt;1 t0h2x5d5k3?k&gt;3</code></p><p><strong>Memory prompt:</strong> <code>2?o&gt;4 b5l6v6?l&gt;6 y5j9b7u8o1?j&gt;9</code></p></blockquote>
+    <p>This small model reached 0.995 exact match on the synthetic recall task, but it was trained for that task rather than natural text. When asked to write, it emits recall-pattern tokens instead of English. It is a useful reminder that success on a specialist task does not imply general language ability.</p>
+    <h3>What I take from these examples</h3>
+    <p>The samples make the results easier to picture, but they are not evidence that every attention-heavy model is a poor writer or that attention guarantees exact retrieval. The clearest example is narrower: in this fixed-seed set, the 38A checkpoint produces the most numerical, least fluent haiku response and is also the only core checkpoint to repeat BANANA. It still misses Pickles. The 2.4M specialist shows the opposite limitation: excellent synthetic recall, no usable English generation.</p>
+    <p>That is the tasting I wanted to add to the quantitative results. The ratios change the character of these particular outputs, but the main conclusions still come from the validation and task scores across runs.</p>
+  </div>
+</details>
+<div class="post-footer">
     <p>This study compares attention-to-MLP ratios in small decoder models on language modelling and synthetic retrieval tasks. The results are specific to the tested model sizes, training setup, and task design.</p>
   </div>
 
 </div>
+
+
+<style>
+.layout .tasting{margin:52px 0 24px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg-elevated)}
+.layout .tasting summary{cursor:pointer;padding:16px 18px;font-family:var(--serif);font-size:1.2rem;font-weight:800;color:var(--text-col-1)}
+.layout .tasting summary::marker{color:var(--text-col-2)}
+.layout .tasting-content{padding:0 18px 18px}
+.layout .tasting h3{margin-top:1.2rem}
+.layout .tasting blockquote{margin:10px 0;padding:10px 14px;border-left:2px solid var(--border-strong);background:var(--bg-card);color:var(--text-col-1-dim)}
+.layout .tasting blockquote p{margin:.35rem 0}
+.layout .tasting{margin:52px 0 24px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg-elevated)}
+.layout .tasting summary{cursor:pointer;padding:16px 18px;font-family:var(--serif);font-size:1.2rem;font-weight:800;color:var(--text-col-1)}
+.layout .tasting summary::marker{color:var(--text-col-2)}
+.layout .tasting-content{padding:0 18px 18px}
+.layout .tasting h3{margin-top:1.2rem}
+.layout .tasting blockquote{margin:10px 0;padding:10px 14px;border-left:2px solid var(--border-strong);background:var(--bg-card);color:var(--text-col-1-dim)}
+.layout .tasting blockquote p{margin:.35rem 0}</style>
 
 

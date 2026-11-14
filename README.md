@@ -13,6 +13,8 @@ blog/post.html                 a single post — reads ?slug= from the URL
 content/posts/manifest.json    the index of every post + its metadata
 content/posts/<slug>.md        the post body, plain markdown
 content/posts/<slug>.html      optional interactive post fragment (format: html)
+photography/index.html         the photo gallery + lightbox
+content/photos/manifest.json   the list of photos shown in the gallery
 assets/css/style.css           all styling (colors, type, layout)
 assets/js/starfield.js         the background star canvas
 assets/js/spinner.js           the small rotating ascii glyph in the hero
@@ -55,6 +57,29 @@ Two files, no code:
 
 There's an example post already in place (`content/posts/welcome.md`) — read
 it once, then delete it and its manifest entry whenever you're ready.
+
+## Adding photos
+
+Drop image files into `content/photos/`, then add their filenames to
+`content/photos/manifest.json`:
+
+```json
+{
+  "photos": [
+    "DSC05626.JPG",
+    "DSC05703.JPG"
+  ]
+}
+```
+
+Entries can be plain filenames or objects with a caption:
+
+```json
+{ "src": "DSC05626.JPG", "caption": "somewhere, 2024" }
+```
+
+They render in a two-column masonry grid; clicking one opens a lightbox that
+closes on click, Esc, or the backdrop.
 
 ## Interactive posts (HTML)
 

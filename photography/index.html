@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gallery</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<div class="topbar">
+  <nav>
+    <a href="../index.html">home</a>
+    <a href="../blog/index.html">blog</a>
+    <a href="index.html" class="current">gallery</a>
+  </nav>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light and dark theme">* light</button>
+</div>
+
+<main class="wrap">
+  <h1 class="page-title">gallery</h1>
+  <p class="page-sub">a few frames i've collected over the years.</p>
+
+  <div class="photo-gallery" id="photo-gallery">
+    <p class="loading">loading photos&hellip;</p>
+  </div>
+</main>
+
+<div class="lightbox" id="lightbox" tabindex="-1" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <figure class="lightbox-inner">
+    <img id="lightbox-img" alt="">
+    <figcaption id="lightbox-caption"></figcaption>
+  </figure>
+  <p class="lightbox-hint">click anywhere or press esc to close</p>
+</div>
+
+<script src="../assets/js/theme.js"></script>
+<script src="../assets/js/starfield.js"></script>
+<script src="../assets/js/favicon.js"></script>
+<script>
+(function () {
+  var gallery = document.getElementById("photo-gallery");
+  var lightbox = document.getElementById("lightbox");
+  var lightboxImg = document.getElementById("lightbox-img");
+  var lightboxCaption = document.getElementById("lightbox-caption");
+  var lastFocus = null;
+
+  function escapeHtml(str) {
+    var div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function prettyName(file) {
+    return file.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+  }
+
+  fetch("../content/photos/manifest.json")
+    .then(function (r) {
+      if (!r.ok) throw new Error("manifest not found");
+      return r.json();
+    })
+    .then(function (data) {
+      var photos = Array.isArray(data) ? data : (data.photos || []);
+      if (photos.length === 0) {
+        gallery.innerHTML = '<p class="empty-state">no photos yet &mdash; check back soon.</p>';
+        return;
+      }
+
+      gallery.innerHTML = photos.map(function (item) {
+        var file = typeof item === "string" ? item : item.src;
+        var src = "../content/photos/" + encodeURIComponent(file);
+        var caption = (item && item.caption) || prettyName(file);
+        return (
+          '<button class="photo-item" type="button" data-src="' + src + '" data-caption="' + escapeHtml(caption) + '">' +
+            '<img src="' + src + '" alt="' + escapeHtml(caption) + '" loading="lazy">' +
+          "</button>"
+        );
+      }).join("");
+    })
+    .catch(function (err) {
+      gallery.innerHTML = '<p class="empty-state">couldn\u2019t load photos (' + escapeHtml(err.message) + '). If you just opened this file directly, run a local server \u2014 see the README.</p>';
+    });
+
+  function openLightbox(src, caption, trigger) {
+    lastFocus = trigger || document.activeElement;
+    lightboxImg.src = src;
+    lightboxImg.alt = caption;
+    lightboxCaption.textContent = caption;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.classList.add("lightbox-open");
+    lightbox.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("lightbox-open");
+    lightboxImg.removeAttribute("src");
+    if (lastFocus) lastFocus.focus();
+  }
+
+  gallery.addEventListener("click", function (e) {
+    var item = e.target.closest(".photo-item");
+    if (!item) return;
+    openLightbox(item.dataset.src, item.dataset.caption, item);
+  });
+
+  lightbox.addEventListener("click", closeLightbox);
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && lightbox.classList.contains("open")) closeLightbox();
+  });
+})();
+</script>
+</body>
+</html>
