@@ -158,6 +158,144 @@
     });
   }
 
+  function sidenoteLabel(i) {
+    var s = "";
+    i += 1;
+    while (i > 0) {
+      i -= 1;
+      s = String.fromCharCode(97 + (i % 26)) + s;
+      i = Math.floor(i / 26);
+    }
+    return s;
+  }
+
+  function setupSidenotes(root) {
+    var sources = Array.prototype.slice.call(root.querySelectorAll("lb"));
+    if (!sources.length) return;
+
+    root.classList.add("has-sidenotes");
+    var notes = [];
+
+    sources.forEach(function (src, idx) {
+      var label = sidenoteLabel(idx);
+      var id = "sn-" + (idx + 1);
+
+      var marker = document.createElement("sup");
+      marker.className = "fn-ref";
+      var link = document.createElement("a");
+      link.href = "#" + id;
+      link.id = "snref-" + (idx + 1);
+      link.textContent = "[" + label + "]";
+      link.setAttribute("aria-label", "Sidenote " + label);
+      marker.appendChild(link);
+
+      var note = document.createElement("aside");
+      note.className = "sidenote";
+      note.id = id;
+      note.setAttribute("role", "note");
+      note.tabIndex = 0;
+
+      var noteLabel = document.createElement("span");
+      noteLabel.className = "sn-label";
+      noteLabel.textContent = "[" + label + "]";
+      note.appendChild(noteLabel);
+
+      var noteBody = document.createElement("span");
+      noteBody.className = "sn-body";
+      noteBody.innerHTML = src.innerHTML;
+      note.appendChild(noteBody);
+
+      var block = src.closest("p, li, blockquote, figcaption, h2, h3, h4");
+      var anchor = block;
+      if (block && block.tagName === "FIGCAPTION") anchor = block.closest("figure") || block;
+
+      src.parentNode.replaceChild(marker, src);
+
+      if (block && block.tagName === "LI") {
+        block.appendChild(note);
+      } else if (anchor && anchor.parentNode) {
+        anchor.parentNode.insertBefore(note, anchor.nextSibling);
+      } else {
+        root.appendChild(note);
+      }
+
+      function setActive(on) {
+        note.classList.toggle("active", on);
+        link.classList.toggle("active", on);
+        note.setAttribute("aria-current", on ? "true" : "false");
+      }
+      function toggle(e) {
+        if (e) e.preventDefault();
+        setActive(!note.classList.contains("active"));
+      }
+
+      link.addEventListener("click", toggle);
+      note.addEventListener("click", function (e) {
+        if (e.target.closest("a")) return;
+        toggle(e);
+      });
+      note.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle(e);
+        }
+      });
+
+      notes.push({ marker: link, note: note, setActive: setActive });
+    });
+
+    document.addEventListener("click", function (e) {
+      if (e.target.closest(".sidenote, .fn-ref")) return;
+      notes.forEach(function (n) { n.setActive(false); });
+    });
+
+    var raf = 0;
+    function position() {
+      raf = 0;
+      var wide = window.matchMedia("(min-width: 1200px)").matches;
+      if (!wide) {
+        notes.forEach(function (n) {
+          n.note.style.left = "";
+          n.note.style.top = "";
+        });
+        return;
+      }
+
+      var bodyRect = root.getBoundingClientRect();
+      var styles = getComputedStyle(document.documentElement);
+      var width = parseFloat(styles.getPropertyValue("--sidenote-w")) || 210;
+      var gap = parseFloat(styles.getPropertyValue("--sidenote-gap")) || 20;
+
+      var items = notes.map(function (n) {
+        return { n: n, top: n.marker.getBoundingClientRect().top };
+      }).sort(function (a, b) { return a.top - b.top; });
+
+      var prevBottom = -Infinity;
+      items.forEach(function (item) {
+        var note = item.n.note;
+        var cb = note.offsetParent || root;
+        var cbRect = cb.getBoundingClientRect();
+        var top = Math.max(item.top, prevBottom + 10);
+        note.style.left = (bodyRect.left - gap - width - cbRect.left) + "px";
+        note.style.top = (top - cbRect.top) + "px";
+        prevBottom = top + note.offsetHeight;
+      });
+    }
+    function schedule() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(position);
+    }
+
+    window.addEventListener("resize", schedule);
+    window.addEventListener("load", schedule);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+    if (window.ResizeObserver) new ResizeObserver(schedule).observe(root);
+    schedule();
+    setTimeout(schedule, 120);
+    setTimeout(schedule, 600);
+    setTimeout(schedule, 1600);
+  }
+
   function slugify(str) {
     return String(str).toLowerCase().trim()
       .replace(/[^\w]+/g, "-")
@@ -323,6 +461,7 @@
             else renderMarkdownPost(src);
             insertHeaderImage(meta);
             buildToc();
+            setupSidenotes(bodyEl);
           });
       })
       .catch(function (err) {

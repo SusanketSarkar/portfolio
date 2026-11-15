@@ -84,6 +84,17 @@
       "format": "html",
       "headerImage": "/portfolio/content/posts/layout_schedule_2/cover.jpg",
       "headerCaption": "Dream of Arcadia, by Thomas Cole (1838)"
+    },
+    {
+      "slug": "number-geom-1",
+      "title": "How does a language model represent numbers?",
+      "date": "2026-11-15",
+      "excerpt": "A seven-experiment interpretability study of how Qwen3.5-4B encodes small integers — magnitude, digits, position, parity, and whether they are unified, multiplexed, or contextual.",
+      "tags": ["number representation"],
+      "published": true,
+      "format": "html",
+      "headerImage": "/portfolio/content/posts/num-geom-1/cover.jpg",
+      "headerCaption": "Prometheus Bound (1847) by Thomas Cole"
     }
   ]
 }
