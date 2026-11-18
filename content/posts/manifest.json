@@ -76,7 +76,7 @@
     },
     {
       "slug": "layout_schedule_2",
-      "title": "Is there an optimal attention:MLP ratio in a decoder-only transformer?",
+      "title": "Is there an optimal attention : mlp ratio in a decoder-only transformer?",
       "date": "2026-11-10",
       "excerpt": "I swept the attention:MLP split from 4:1 to 1:4 with everything else fixed, then separated the apparent ratio effect from the parameter-count effect hiding inside it.",
       "tags": ["respresentation dynamics"],
@@ -89,12 +89,23 @@
       "slug": "number-geom-1",
       "title": "How does a language model represent numbers?",
       "date": "2026-11-15",
-      "excerpt": "A seven-experiment interpretability study of how Qwen3.5-4B encodes small integers — magnitude, digits, position, parity, and whether they are unified, multiplexed, or contextual.",
-      "tags": ["number representation"],
+      "excerpt": "How does a language model represent numbers? Does one representation contain many things at once, magnitude, digit identity, position, parity etc.?",
+      "tags": ["mathematical reasoning"],
       "published": true,
       "format": "html",
       "headerImage": "/portfolio/content/posts/num-geom-1/cover.jpg",
       "headerCaption": "Prometheus Bound (1847) by Thomas Cole"
+    },
+    {
+      "slug": "number-comp",
+      "title": "How does a language model do maths?",
+      "date": "2026-11-17",
+      "excerpt": "How does a language model do maths? Does it use symbolic reasoning or approximate calculations?",
+      "tags": ["mathematical reasoning"],
+      "published": true,
+      "format": "html",
+      "headerImage": "/portfolio/content/posts/number-comp/cover.jpg",
+      "headerCaption": "The Destruction of Pompeii and Herculaneum (1822) by John Martin"
     }
   ]
 }

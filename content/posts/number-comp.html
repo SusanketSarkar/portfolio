@@ -1,0 +1,670 @@
+<style>
+.numcomp{
+  --radius:6px;
+  color:var(--text-col-1);
+  font-family:var(--body-serif, "Charter", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif);
+  font-size:18px;
+  line-height:1.72;
+}
+.numcomp *{box-sizing:border-box}
+.numcomp a{color:var(--text-col-2);text-decoration:none}
+.numcomp a:hover{text-decoration:underline}
+.numcomp code,.numcomp pre,.numcomp .mono{font-family:var(--mono)}
+.numcomp .wrap{max-width:100%;margin:0 auto}
+.numcomp .narrow{max-width:100%;margin:0 auto}
+
+/* hero */
+.numcomp .hero{padding:0 0 8px;position:relative;text-align:left}
+.numcomp .kicker{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-col-2);display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 16px}
+.numcomp .kicker .sep{width:26px;height:1px;background:var(--border-strong)}
+.numcomp .lede{font-size:1.15rem;color:var(--text-col-1-dim);margin:0;line-height:1.6}
+.numcomp .meta{margin:12px 0 0;color:var(--text-col-1-dim);font-family:var(--mono);font-size:.78rem;line-height:1.6}
+.numcomp .pill{font-size:.72rem;border:1px solid var(--border-strong);border-radius:999px;padding:4px 11px;color:var(--text-col-1-dim)}
+.numcomp .pill b{color:var(--text-col-1);font-weight:600}
+.numcomp .rule{height:1px;background:linear-gradient(90deg,var(--border-strong),transparent);margin:26px 0}
+
+/* sections */
+.numcomp section{margin-top:52px}
+.numcomp .sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.numcomp .sec-num{flex:none;font-family:var(--mono);font-size:.8rem;color:var(--text-col-2);border:1px solid var(--border-strong);border-radius:999px;padding:2px 10px;line-height:1.4}
+.numcomp .sec-num.alt{color:var(--text-col-3);border-color:var(--text-col-3)}
+.numcomp h2{font-family:var(--serif);font-weight:900;font-size:1.8rem;line-height:1.3;margin:0;color:var(--text-col-1)}
+.numcomp h3{font-family:var(--serif);font-weight:900;font-size:1.3rem;margin:1.4rem 0 .4rem;color:var(--text-col-1)}
+.numcomp h4{font-family:var(--mono);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-col-2);margin:1.6rem 0 .5rem}
+.numcomp p{margin:.7rem 0}
+.numcomp .prose p{margin:.8rem 0}
+.numcomp .prose p:last-child{margin-bottom:0}
+.numcomp .drop::first-letter{font-size:3.1em;line-height:.8;float:left;font-weight:700;color:var(--text-col-2);margin:8px 10px 0 0;font-family:var(--serif)}
+.numcomp strong{font-weight:600}
+.numcomp .muted{color:var(--text-col-1-dim)}
+.numcomp .faint{color:var(--text-col-1-faint)}
+.numcomp .small{font-size:.85rem}
+.numcomp .hl{background:linear-gradient(transparent 62%,var(--text-col-2-dim) 62%);padding:0 2px}
+.numcomp .term{font-family:var(--mono);font-size:.86em;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:1px 6px;color:var(--text-col-1)}
+.numcomp .math{font-family:var(--serif);font-style:italic;white-space:nowrap}
+.numcomp lb{display:block;margin:1rem 0;padding:.55rem .8rem;border-left:2px solid var(--text-col-2);background:var(--bg-card);color:var(--text-col-1-dim);font-size:.88rem;line-height:1.55}
+.numcomp lb::before{content:"Side note";display:block;margin-bottom:.15rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-col-2)}
+.numcomp .references li{margin:12px 0}
+
+/* part dividers */
+.numcomp .part-label{font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-col-2);margin:56px 0 0;display:flex;align-items:center;gap:12px}
+.numcomp .part-label::after{content:"";flex:1;height:1px;background:var(--border)}
+
+/* figures */
+.numcomp .figure{margin:18px 0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.numcomp .figure img{width:100%;height:auto;display:block;border-radius:4px;border:0;margin:0}
+.numcomp .cap{font-family:var(--mono);font-size:.82rem;color:var(--text-col-1-dim);margin:10px 2px 0;line-height:1.5}
+.numcomp .cap b{color:var(--text-col-1)}
+.numcomp .cap .figno{display:inline-block;font-weight:700;color:var(--text-col-2);margin-right:6px}
+.numcomp .figstack{display:flex;flex-direction:column;gap:16px}
+
+/* cards / callouts */
+.numcomp .card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin:1.1em 0}
+.numcomp .card.tight{padding:13px 16px}
+.numcomp .card h4{margin:0 0 .55rem}
+.numcomp .card p:last-child{margin-bottom:0}
+.numcomp .card.accent{border-left:3px solid var(--text-col-2)}
+.numcomp .card.good{border-left:3px solid var(--text-col-4)}
+.numcomp .card.warn{border-left:3px solid var(--text-col-6)}
+.numcomp .card.bad{border-left:3px solid var(--text-col-5)}
+.numcomp .card.verdict{border-left:3px solid var(--text-col-4)}
+.numcomp .tag{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;border-radius:999px;padding:3px 9px;margin-bottom:8px}
+.numcomp .tag.green{background:var(--text-col-4-dim);color:var(--text-col-4);border:1px solid var(--text-col-4)}
+.numcomp .tag.blue{background:var(--text-col-2-dim);color:var(--text-col-2);border:1px solid var(--text-col-2)}
+.numcomp .tag.amber{background:var(--text-col-6-dim);color:var(--text-col-6);border:1px solid var(--text-col-6)}
+.numcomp .tag.red{background:var(--text-col-5-dim);color:var(--text-col-5);border:1px solid var(--text-col-5)}
+
+/* badges used inline in prose */
+.numcomp .badge{display:inline-block;font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.numcomp .b-strong{background:var(--text-col-4-dim);color:var(--text-col-4);border:1px solid var(--text-col-4)}
+.numcomp .b-partial{background:var(--text-col-6-dim);color:var(--text-col-6);border:1px solid var(--text-col-6)}
+.numcomp .b-null{background:var(--text-col-5-dim);color:var(--text-col-5);border:1px solid var(--text-col-5)}
+.numcomp .b-mixed{background:var(--text-col-2-dim);color:var(--text-col-2);border:1px solid var(--text-col-2)}
+
+/* tables */
+.numcomp .tablewrap{overflow-x:auto;margin:16px 0;border:1px solid var(--border);border-radius:var(--radius)}
+.numcomp .tbl{width:100%;border-collapse:collapse;margin:0;font-size:.8rem;font-family:var(--mono);min-width:520px}
+.numcomp .tbl th{background:var(--bg-card);color:var(--text-col-1-dim);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;text-align:left;padding:9px 12px;border-bottom:1px solid var(--border-strong);white-space:nowrap;vertical-align:bottom}
+.numcomp .tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text-col-1);line-height:1.5}
+.numcomp .tbl tr:last-child td{border-bottom:0}
+.numcomp .tbl tr:hover td{background:var(--bg-elevated)}
+.numcomp .tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.numcomp .tbl .strong{color:var(--text-col-4);font-weight:600}
+.numcomp .tbl .weak{color:var(--text-col-5);font-weight:600}
+.numcomp .tbl .muted{color:var(--text-col-1-dim)}
+
+/* code */
+.numcomp code{font-family:var(--mono);font-size:.86em;background:var(--bg-card);border:1px solid var(--border);padding:.08em .4em;border-radius:4px;color:var(--text-col-1)}
+.numcomp pre{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;overflow-x:auto;font-size:.8rem;line-height:1.55}
+.numcomp pre code{background:none;border:0;padding:0;font-size:1em}
+
+/* lists */
+.numcomp ul{padding-left:22px;margin:.7rem 0}
+.numcomp li{margin:7px 0}
+
+/* two-column */
+.numcomp .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:720px){ .numcomp .two{grid-template-columns:1fr} }
+
+/* footer */
+.numcomp .footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-col-1-faint);font-family:var(--mono);font-size:.78rem;line-height:1.65}
+
+@media(max-width:640px){
+  .numcomp{font-size:17px}
+  .numcomp section{margin-top:42px}
+  .numcomp .tbl{min-width:0}
+}
+</style>
+
+<div class="numcomp">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <p class="lede">I study how a language model represents and computes with numbers and algebra, using probes, causal interventions, and symbolic evaluation.</p>
+    <div class="meta">
+    <span>Model: Qwen3.5-4B</span>
+    <!-- <span class="pill">Numbers · <b>integers 0–999</b></span>
+    <span class="pill">Readout · <b>linear probes + geometry + patching</b></span>
+    <span class="pill">Hardware · <b>GPUs 1 &amp; 2 only</b></span> -->
+  </div>
+  <div class="rule"></div>
+  </header>
+
+  <!-- ===================== TL;DR ===================== -->
+  <section id="tldr" style="padding-top:26px">
+  <div class="wrap narrow prose">
+    <div class="card verdict"><span class="tag green">TL;DR</span>
+      <p><strong>The model is a far stronger single-step calculator and symbolic manipulator than naive exact-match scoring suggests.</strong> It is perfect at expansion, factorization, and most one-step transformations, and its core arithmetic is causally real but it does not generalize.</p>
+      <p>It collapses on multi-step combining/reduction, on unseen coefficients, structures, and depths, on systems of equations, and on tracking variable reassignment. Its internal representations are rich and decodable, and causally effective in the <strong>late layers</strong>; but the computational state that matters is assembled late, and the model's competence is best described as <span class="hl"><strong>pattern-anchored, single-step, template-bounded</strong></span> rather than as a reusable, compositional algorithm.</p>
+    </div>
+  </section>
+  <!-- ===================== INTRO ===================== -->
+  <section id="intro" style="margin-top:26px">
+    <div class="wrap narrow prose">
+      <p class="drop">This is the second phase of my study of mathematical computation in language models. Phase&nbsp;1 asked <em>how does the model represent numbers?</em> Phase&nbsp;2 asks the harder question: <em>how does it manipulate those representations to compute, and does it build abstract mathematical relationships at all?</em> Prior work has studied the geometry of numerical representations <a href="https://arxiv.org/abs/2502.16147">[1]</a>; here I focus on computation and generalization.</p>
+      <p>I ran sixteen experiments covering arithmetic (operation-specific pathways, multiplication geometry, carry/borrow, operand–result relationships, equivalence), algebra (variable binding, equation solving, symbolic transformation, inverse operations, systems, simplification, syntax vs. semantics), and the bridge between them (intermediate states, the logit lens, and rule-generalization vs. template-matching). For each I collected three complementary kinds of evidence: <strong>linear probing</strong> (is the quantity linearly readable in the residual stream?), <strong>causal intervention</strong> (does perturbing a representation or component change the answer?), and <strong>behavioural evaluation</strong> (does it actually get the task right, scored with SymPy where the answer is symbolic).</p>
+      <p>I examine whether mathematical information is merely readable in the residual stream or whether interventions show it contributes to the answer. I then test how far single-step performance extends to new values, structures, and multi-step problems. The sections below move from arithmetic through algebra to generalization and causal evidence.</p>
+    </div>
+  </section>
+
+  <!-- ===================== 1. METHOD ===================== -->
+  <section id="method">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">01</div><h2>Method &amp; how to read the evidence</h2></div>
+      <div class="narrow prose">
+        <p><strong>The model.</strong> Qwen3.5-4B in bfloat16 on a single GPU, eager attention. I extract the residual stream after every attention block and MLP block (layers 0–31), plus attention patterns and neuron activations where needed. This follows prior work that studies arithmetic through internal representations and targeted interventions <a href="https://arxiv.org/abs/2402.02619">[2]</a><a href="https://arxiv.org/abs/2305.15054">[3]</a>.</p>
+        <p><strong>Three legs of evidence.</strong> I treat these as a hierarchy of claim-strength, not as interchangeable:</p>
+      </div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>Evidence</th><th>What it establishes</th><th>Caveat</th></tr></thead>
+          <tbody>
+            <tr><td>Linear probe</td><td>The quantity is <em>linearly decodable</em> from a residual state.</td><td>Decodable ≠ used. A direction can be readable without being computationally load-bearing.</td></tr>
+            <tr><td>Subspace / component removal</td><td>The information can be <em>selectively disrupted</em>.</td><td>Disruption can hit correlated, not necessarily causal, features.</td></tr>
+            <tr><td>Component ablation</td><td>A component <em>contributes</em> to behaviour.</td><td>Redundancy can mask the effect; a null result is weak evidence of absence.</td></tr>
+            <tr><td>Activation patching</td><td>One activation <em>causally transfers</em> behaviour into another run.</td><td>Whole-vector patches carry many correlated properties at once; subspace-restricted patches are stronger.</td></tr>
+            <tr><td>Feature-level intervention</td><td>A candidate <em>feature</em> has a causal effect.</td><td>The intervention must predict the <em>direction and magnitude</em> of the behavioural change, not just cause change.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="narrow prose">
+        <p>A representation can be highly decodable without being what the model actually computes with. So I never conclude "the model does X" from probe accuracy alone; I require the causal leg to corroborate. <lb>A linear probe shows that information is accessible to a simple decoder. It does not show that the model relies on that information to produce its answer; that requires an intervention with a specific, measurable effect.</lb> Conversely, a null causal result is <em>not</em> strong evidence the model doesn't compute X — redundancy, my intervention site, or my patch granularity can all produce false nulls. For each causal result, I state whether the effect is clear, partial, or inconclusive.</p>
+        <p><strong>Probing protocol.</strong> Ridge-regularized linear probes (and capacity-matched MLP probes where the question is nonlinear), trained on value-based or structure-based splits — <em>never</em> random row splits, so a probe can't memorize individual problems. Every probe is compared against a random-label baseline and an input-embedding baseline, run over multiple seeds, with class balancing where the target is imbalanced. The headline number I report is the held-out R² (regression) or accuracy (classification) at the layer where it peaks. This distinction between decodability and functional use is a standard caution in probing work <a href="https://arxiv.org/abs/2102.12452">[4]</a>.</p>
+        <p><strong>Causal protocol.</strong> I patch the full residual vector at a target token position and layer from a "clean" run into a matched "corrupt" run, then read the model's answer. A <em>flip</em> means the patched run produces the clean run's answer. <lb>For example, I can replace the hidden state for one operand with the corresponding state from a run where that operand differs, then check whether the answer follows the substituted value.</lb> I patch at three depths — early (L16), mid–late (L24), late (L31) — because the layer at which an intervention works is itself a finding. I also ablate attention heads and MLPs per layer and measure the drop in task accuracy.</p>
+        <p><strong>Behavioural protocol.</strong> Exact-match accuracy is the baseline, but for symbolic answers I score with SymPy: parse both the model's and the reference expression and test <code>simplify(a − b) == 0</code>. This makes the score insensitive to notation and appropriate for symbolic transformations such as expansion and factorization. For example, <code>x + x</code> and <code>2x</code> count as equivalent.</p>
+        <p><strong>How to read the figures.</strong> Most figures are <em>layer profiles</em>: the x-axis is the transformer layer (0 = embeddings, 31 = last block) and the y-axis is a probe score, an accuracy, or a similarity. A curve that is high everywhere means the information is available from early on; a curve that rises through the network means it is <em>constructed</em> by computation. A flat curve near zero means it is not there in that form. I explain what each axis and each curve means in the caption, and I say in the prose what I want you to take from it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART I ===================== -->
+  <div class="part-label">Part I — Arithmetic</div>
+
+  <!-- ===================== E1 ===================== -->
+  <section id="e1">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">02</div><h2>Do the four operations use different computational pathways?</h2></div>
+      <div class="narrow prose">
+        <p>I generated balanced banks of addition, subtraction, multiplication and division at matched operand scales, and asked three things: (A) <em>when</em> does the result become decodable for each operation, (B) do the operations' result subspaces overlap, and (C) do attention and MLPs divide the labour differently per operation? A component-ablation sweep (D) then asked which layers are actually load-bearing.</p>
+        <p>The cleanest result is in the ablation. Ablating the <strong>layer-0 attention block collapses every one of the four operations to 0.0 accuracy</strong> — so there is a shared, early, attention-based step (almost certainly token/position routing and the first operand read-out) that all operations depend on. After that, the operations <em>diverge</em>:</p>
+      </div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>Operation</th><th class="num">Baseline acc</th><th>Where ablation hurts most</th><th>Reading</th></tr></thead>
+          <tbody>
+            <tr><td>Addition</td><td class="num">0.99</td><td>L19 attention → 0.33; L18 MLP → 0.72</td><td>Relies on a mid-layer attention step</td></tr>
+            <tr><td>Subtraction</td><td class="num">1.00</td><td>L19 attention → 0.51; L23 MLP → 0.51</td><td>Same mid attention step + a late MLP</td></tr>
+            <tr><td>Multiplication</td><td class="num">0.99</td><td>L19 attention → 0.51; L19–L22 MLPs → 0.47–0.81</td><td>Mid attention + a broader MLP band</td></tr>
+            <tr><td>Division</td><td class="num">0.37</td><td>L18–L24 MLPs → 0.10–0.25</td><td>Weaker baseline; leans on MLPs more</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="narrow prose">
+        <p>So the answer is <strong>partially shared, not independent and not identical</strong>: a common early attention foundation, then operation-specific mid/late components. Addition and subtraction share the L19 attention step; multiplication recruits a wider MLP band; division — which the model is worst at (0.37) — leans most heavily on the MLPs. This is consistent with the attention/MLP division of labour reported for arithmetic in the literature, extended here to all four operations.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e01A_result_decodability.png" alt="Result decodability across layers for each operation">
+        <p class="cap"><span class="figno">Fig 1</span> <b>E1-A · Result decodability.</b> Held-out result-decodability (R²) vs. layer, one curve per operation. Read the <em>timing</em>, not just the height: where each operation's result first becomes linearly readable, and how far apart the curves are. Addition/multiplication reach high R² early; division lags, consistent with its weak behavioural accuracy.</p>
+      </div>
+
+      <div class="figure">
+          <img src="/portfolio/content/posts/number-comp/e01B_probe_subspace_angles.png" alt="Probe subspace principal angles">
+          <p class="cap"><span class="figno">Fig 2</span> <b>E1-B · Subspace angles.</b> Principal angles between the four operations' result-probe subspaces. Near-zero angles = overlapping subspaces — the operations share much of the same representational geometry rather than living in disjoint directions.</p>
+      </div>
+      <div class="figure">
+          <img src="/portfolio/content/posts/number-comp/e01C_attn_vs_mlp.png" alt="Attention vs MLP contributions">
+          <p class="cap"><span class="figno">Fig 3</span> <b>E1-C · Attention vs. MLP.</b> Per-layer change in decodability attributed to the attention update vs. the MLP update. Shows where each component type does work, per operation.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e01D_ablation_damage.png" alt="Ablation damage per layer and operation">
+        <p class="cap"><span class="figno">Fig 4</span> <b>E1-D · Ablation damage.</b> Accuracy after ablating each layer's attention/MLP, per operation. The L0-attention floor (everything → 0.0) and the per-operation mid/late sensitivity are the key features. This is the strongest causal evidence in Part&nbsp;I.</p>
+      </div>
+
+      <div class="card accent">
+        <h4>Verdict</h4>
+        <p>partially shared mechanism A shared early-attention foundation, then operation-specific mid/late attention-MLP circuits. Division is structurally the weakest operation. The E1-Dpatch operator-swap arm produced no interpretable result, so I exclude it from the causal conclusions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E2 ===================== -->
+  <section id="e2">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">03</div><h2>Does multiplication use logarithmic geometry?</h2></div>
+      <div class="narrow prose">
+        <p>Phase&nbsp;1 suggested a mildly logarithmic number geometry. Here I test whether that geometry is actually <em>used</em> by multiplication, i.e. whether the model combines operands in a space where <code>log(ab) = log a + log b</code>.</p>
+        <p>Three findings, in order of strength. <strong>First</strong>, logarithmic magnitudes are trivially present: probes for <code>log(result)</code> and <code>log(a)+log(b)</code> both reach R² ≈ 0.99 by layer ~19 (and <code>log(a)</code>, <code>log(b)</code> are decodable in every layer). So the model has access to log-magnitude — but that is a necessary, not sufficient, condition for log-computation; any decent number representation will contain a log-ish direction. <strong>Second</strong>, the product is <em>not</em> a linear or additive function of the operand representations: a linear predictor of the product from the two operand states reaches R² ≈ 0.58, a log-linear combination ≈ 0.53, and only a small MLP combination lifts to ≈ 0.80. The nonlinearity is doing real work. <strong>Third</strong>, the causal arm (ablating the log subspace vs. a random subspace of equal dimension) is <strong>uninformative</strong>, because the behavioural baseline on the 1–99 test set is already 1.0 — there is nothing left to damage. So: log-magnitude is present and the computation is nonlinear, but I cannot claim the model <em>computes in log-space</em>; that would require a behavioural regime where the log hypothesis is falsifiable.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e2_A_log.png" alt="Log probe decodability">
+        <p class="cap"><span class="figno">Fig 5</span> <b>E2-A · Log probes.</b> R² for <code>result</code>, <code>log(result)</code>, and <code>log(a)+log(b)</code> vs. layer. All three rise together, confirming log-magnitude is linearly accessible from mid layers on.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e2_B_recon.png" alt="Product reconstruction by model complexity">
+        <p class="cap"><span class="figno">Fig 6</span> <b>E2-B · Product reconstruction.</b> Reconstruction R² of the product state from the two operand states, by predictor class (linear, log-linear, quadratic, MLP). The MLP lift over the linear baselines is the evidence that multiplication is a nonlinear transform of the operand geometry, not a linear read-off.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted">E2-C (log-subspace causal ablation) is reported as <strong>null / uninformative</strong>, not as evidence against log-computation — the 1.0 baseline makes it unfalsifiable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E3 ===================== -->
+  <section id="e3">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">04</div><h2>Carry and borrow circuits</h2></div>
+      <div class="narrow prose">
+        <p>I built matched problems that differ in exactly one carry/borrow property (no-carry, units-carry, tens-carry, cascading carry, boundary crossing) and asked whether the model maintains position-specific carry states, the way a digit-by-digit algorithm would.</p>
+        <p>The units-carry indicator is <strong>strongly decodable (≈ 0.98)</strong> and carry/borrow information is linearly accessible across layers — so the model does track carry as a readable quantity. But the generalization test is only partial: a carry probe trained on the units position transfers to the hundreds position at R² ≈ 0.51, not near 1.0. That is intermediate between "one shared abstract carry feature" (would transfer at ≈ 1.0) and "fully position-specific circuits" (would transfer at chance). The model has <em>some</em> position-invariance in carry, but it is not a clean, reusable carry feature. The causal carry-patching arm (E3-C) did not run to completion and is <strong>not</strong> reported.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e3_A_carry.png" alt="Carry probe decodability by layer and digit position">
+        <p class="cap"><span class="figno">Fig 7</span> <b>E3-A · Carry probes.</b> Carry-indicator probe accuracy vs. layer, by digit position. The early, high units-carry curve and the weaker higher-position curves show carry is present but not fully position-invariant.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e3_D_transfer.png" alt="Carry position transfer">
+        <p class="cap"><span class="figno">Fig 8</span> <b>E3-D · Position transfer.</b> Cross-position carry transfer (probe trained on one position, tested on another). The partial (not near-perfect, not chance) transfer is the key number: ≈ 0.51 for units→hundreds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART II ===================== -->
+  <div class="part-label">Part II — Operands, results &amp; equivalence</div>
+
+  <!-- ===================== E4 ===================== -->
+  <section id="e4">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">05</div><h2>Numerical identity vs. relationships</h2></div>
+      <div class="narrow prose">
+        <p>This is the direct follow-up to the "54 = 6 × 9" question. I matched prompts that share operands, operators, or results, and asked how the model separates <em>operand identity</em> from <em>operator identity</em> from the <em>result</em> they produce.</p>
+        <p>The representations are cleanly there: first-operand, second-operand, and operator probes all reach ≈ 0.99 accuracy, and the result probe ≈ 0.99. The relational-similarity analysis (E4-B) is the weak leg — the squared-distance metric doesn't cleanly separate "shared operand" from "shared result," so I treat it as inconclusive rather than as evidence. The factorization arm (E4-D) shows the model does encode some multiplicative structure (e.g. number-of-divisors at R² 0.7–0.85), but it is weaker than the core operand/result representations.</p>
+        <p>The important new result is causal. Patching the <strong>second-operand</strong> representation from a clean run into a matched corrupt one <strong>flips the answer 2/2 at L24</strong> (0/2 at the early L16, 1/2 at L31) — the operand state is not just readable, it is <strong>causally load-bearing at the mid–late layer</strong> and is the thing that determines the answer. This is one of the cleanest causal effects in the study. The operator arm in the same experiment also flipped 2/2 at L24, but I flag it as weaker: the independent E14-B re-run of the operator-swap (Section 17) found 0 flips at every layer it tested, so I do not rank the operator's causal role with the operand's. The honest split is: <strong>operand — clean causal effect; operator — localised, non-reproduced.</strong></p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e4_B_relational.png" alt="Relational similarity across layers">
+        <p class="cap"><span class="figno">Fig 9</span> <b>E4-B · Relational similarity.</b> Pairwise similarity between matched prompts grouped by shared operand / operator / result, across layers. Treated as inconclusive (metric limitation), shown for completeness.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e4_D_factor.png" alt="Factorization structure probes">
+        <p class="cap"><span class="figno">Fig 10</span> <b>E4-D · Factor structure.</b> Probes for multiplicative structure (prime factors, number of divisors, divisibility) vs. layer. Present but weaker than the operand/result representations — the model has some number-theoretic structure, not a full factorization machinery.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Fixed causal result (E4-C):</strong> operand/operator patch flips the answer <strong>4/4 at L24</strong>, 0/4 at L16. causal effect</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E5 ===================== -->
+  <section id="e5">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">06</div><h2>Does the model recognize mathematical equivalence?</h2></div>
+      <div class="narrow prose">
+        <p>I compared expressions that evaluate to the same value through different routes (commutativity, associativity, factorization) and asked whether equivalent expressions converge on a shared representation, and whether the model can <em>judge</em> equivalence.</p>
+        <p>Two clean, opposing results. <strong>Within a family</strong>, cross-format transfer is excellent: a probe trained on commutative pairs transfers to held-out commutative pairs at 0.99, and associative pairs at 0.995. <strong>Across families</strong>, it collapses: commutative→associative transfer is 0.30 and associative→commutative is negative (−0.60). So the model has a strong representation of each equivalence family, but not a unified "these are the same value" representation that transfers across families.</p>
+        <p>The behavioural equivalence-judgment task is a flat <strong>0/300</strong>: when asked directly "are these two expressions equal?", the model says "yes" or "no" at chance. This is the recurring pattern in this study — the knowledge is <em>present in the residual stream</em> (probes and transfer show it) but is <em>not surfaced as a deliberate judgment</em> in generation. The model can <em>use</em> equivalence implicitly in computation; it cannot <em>state</em> it.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e5_A_equiv.png" alt="Equivalence similarity and cross-format transfer">
+        <p class="cap"><span class="figno">Fig 11</span> <b>E5-A · Equivalence transfer.</b> Within-family vs. cross-family similarity/transfer. The high within-family and low/negative cross-family values are the whole finding: family-specific equivalence, no unified equivalence representation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART III ===================== -->
+  <div class="part-label">Part III — Algebra</div>
+
+  <!-- ===================== E6 ===================== -->
+  <section id="e6">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">07</div><h2>How are variables represented and bound to values?</h2></div>
+      <div class="narrow prose">
+        <p>My highest-priority algebra question: does the model maintain a representation of a variable <em>separately</em> from the value it holds, and can it track reassignment? I generated synthetic assignment programs (<code>x = 5; y = x + 3; z = y * 2</code>), renamed variants, and reassignment traps (<code>x = 5; y = x + 3; x = 10; what is y?</code> → 8, not 13).</p>
+        <p>The picture is split, and the split is the finding. <strong>Strong:</strong> the variable's <em>value</em> is decodable (≈ 0.91), and the representation is <strong>almost perfectly invariant to renaming</strong> — a value probe trained on <code>x,y,z</code> programs transfers to <code>a,b,c</code> programs at R² ≈ 0.997 (L24). That is exactly what a systematic variable-binding mechanism should look like: the computation is name-independent once assignments are interpreted. <strong>Weak:</strong> the variable's <em>identity</em> is only ≈ 0.32 (barely above the few-name chance), and <em>reassignment tracking</em> is ≈ 0.22 — the model largely fails to keep the "current" value of a variable distinct from its earlier value. Causally, patching the assigned value transfers 1/2 pairs at L24 and 1/2 at L31 — partial, not clean.</p>
+        <p>So: the model binds variables to values in a renaming-invariant way (genuinely good), but it does <em>not</em> robustly track <em>which</em> variable is which or <em>when</em> a value was overwritten. It has the binding; it lacks the dynamic addressable-memory bookkeeping.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e6_A_identity_value.png" alt="Variable identity vs value probes">
+        <p class="cap"><span class="figno">Fig 12</span> <b>E6-A · Identity vs. value.</b> Probes for variable identity, variable value, and reassignment flag vs. layer. The value curve is high, the identity and reassignment curves are low — the split that defines the finding.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e6_E_headline.png" alt="Variable binding headline">
+        <p class="cap"><span class="figno">Fig 13</span> <b>E6-E · Binding headline.</b> Renaming invariance (cross-name value transfer ≈ 0.997) alongside the reassignment-tracking failure. Together they say: binding is systematic, bookkeeping is not.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Causal (E6-C):</strong> value-identity patch transfers 1/2 at L24, 1/2 at L31 — partial. Not a clean causal effect.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E7 ===================== -->
+  <section id="e7">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">08</div><h2>How does the model solve linear equations?</h2></div>
+      <div class="narrow prose">
+        <p>For <code>2x + 6 = 16</code>, a textbook solution goes <code>2x = 10</code> then <code>x = 5</code>. I asked whether those <em>intermediate</em> equation states become decodable, in what order, and whether they are causally real. I trained probes for: the original coefficient, the original constant, the right-hand side, the <em>reduced</em> constant <code>c − b</code>, the reduced coefficient, and the final solution <code>x</code>.</p>
+        <p>The result is one of the cleanest in the study. The reduced constant <code>c − b</code> is decodable at R² ≈ 0.984, and the final solution <code>x</code> at R² ≈ 0.988 (both peaking in the late layers, ~L31). So the model does construct the intermediate algebraic state — it is not just pattern-matching to the answer. And it is <strong>causally real</strong>: patching the reduced-constant representation from a clean equation into a matched corrupt one flips the answer <strong>2/2 at L31</strong> (and 1/2 at L24, 0/2 at L16). Intervening on one intermediate quantity while the rest is held by context changes the answer in the predicted direction — exactly the "change <code>c−b</code>, keep the coefficient, and the solution moves" test the plan called for.</p>
+        <p>The depth/generalization leg is the caveat: this holds for the simple <code>ax + b = c</code> template. Whether the same intermediate-state machinery generalizes to deeper, nested equations is tested in Experiment 9 and 16, and the answer there is much weaker.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e7_A_stages.png" alt="Equation intermediate-state probes">
+        <p class="cap"><span class="figno">Fig 14</span> <b>E7-A · Equation stages.</b> R² for each equation stage (coefficient, constant, RHS, reduced constant <code>c−b</code>, solution <code>x</code>) vs. layer. The reduced-constant and solution curves reaching ≈ 0.98 in the late layers is the key evidence that intermediate algebraic states are constructed, not just retrieved.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Fixed causal result (E7-C):</strong> reduced-constant patch flips the answer <strong>2/2 at L31</strong>, 1/2 at L24, 0/2 at L16. causal effect</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E8 ===================== -->
+  <section id="e8">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">09</div><h2>Symbolic transformation (expansion, factorization, distribution)</h2></div>
+      <div class="narrow prose">
+        <p>Here the model manipulates symbols rather than numbers: expand <code>3(x+2) → 3x+6</code>, factor <code>x²+5x+6 → (x+2)(x+3)</code>, distribute, combine like terms, cancel, commute, simplify fractions.</p>
+        <p><strong>This is the experiment the first (biased) scorer got backwards.</strong> Graded by exact/substring match, the model looked like it failed at everything (expansion 0.12, factorization 0.05). Graded by SymPy equivalence — the correct metric — the picture inverts: the model is <strong>perfect (1.0) at expansion, factorization, combining like terms, canceling, and commuting terms</strong>, and strong at constant collection (0.90) and fraction simplification (0.82). It writes <code>5x + 90</code> and <code>(x + 2)(x + 9)</code>; that is correct algebra that a string-matcher mis-scores.</p>
+        <p>The genuine gap is narrow and specific: <strong>the combining/reduction step after distribution</strong>. When the task requires distributing <em>and</em> then collecting like terms (e.g. <code>2(x+9) − 5(x−2) → 28 − 3x</code>), accuracy drops to ≈ 0.29. So the model's symbolic weakness is not "it can't do algebra" — it is that it <em>executes each transformation well but stumbles when a task requires chaining a distribution into a reduction</em>. This is consistent with the depth-collapse theme that runs through the whole study.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e08B_rule_probes.png" alt="Symbolic transformation accuracy by kind">
+        <p class="cap"><span class="figno">Fig 15</span> <b>E8-B · Transformation accuracy.</b> SymPy-equivalence accuracy by transformation kind. The high bars (expand, factor, like-terms, cancel, commute) and the single low bar (distribute+combine) are the finding: strong single-step transforms, weak multi-step reduction.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Corrected numbers (SymPy):</strong> expand 1.0 · factor 1.0 · like-terms 1.0 · cancel 1.0 · commute 1.0 · collect-const 0.90 · frac-simp 0.82 · <strong>distribute+combine 0.29</strong>. The old exact-match column (expand 0.12, factor 0.05) is a scorer artifact and is superseded.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E9 ===================== -->
+  <section id="e9">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">10</div><h2>Inverse operations and transformation selection</h2></div>
+      <div class="narrow prose">
+        <p>For <code>3x + 7 = 22</code> the first move is "subtract 7"; for <code>3(x+7) = 22</code> it is "divide by 3." I asked whether the model represents the <em>next required inverse operation</em> — a step before the answer — and whether it generalizes to deeper equations.</p>
+        <p>The inverse-operation selection is <strong>decodable at ≈ 1.0 in every layer</strong>: the model knows, before it produces a number, what the next transformation is. That is strong evidence for a systematic, reusable inverse-operation mechanism rather than answer retrieval. Causally, patching the transformation-selection state flips the answer <strong>2/2 at L24 and 2/2 at L31</strong> (0/2 at L16) — so the selection state is genuinely load-bearing.</p>
+        <p>But the generalization leg fails: behavioural accuracy on depth-1 equations is 0.46 and drops to 0.23 at depth-2, and cross-depth probe transfer is ≈ 0. So the model has a clean, causally-real mechanism for <em>one</em> inverse step, but it does not <em>compose</em> them into a multi-step solution. Same pattern as E8: excellent single-step, weak chaining.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e9_A_inverse.png" alt="Inverse-operation selection probes">
+        <p class="cap"><span class="figno">Fig 16</span> <b>E9-A · Inverse selection.</b> Accuracy of the "next inverse operation" probe vs. layer. A flat ~1.0 curve (the operation is known from early on, before the answer) is the evidence for a reusable transformation-selection mechanism.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e9_C_depth.png" alt="Depth generalization">
+        <p class="cap"><span class="figno">Fig 17</span> <b>E9-C · Depth generalization.</b> Behavioural accuracy and probe transfer as equation depth increases. The drop (0.46 → 0.23) and near-zero cross-depth transfer show the mechanism does not compose beyond a single step.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Fixed causal result (E9-B):</strong> transformation-selection patch flips the answer <strong>2/2 at L24 and 2/2 at L31</strong>, 0/2 at L16. causal effect</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E10 ===================== -->
+  <section id="e10">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">11</div><h2>Systems of equations and substitution</h2></div>
+      <div class="narrow prose">
+        <p>I asked the model to solve two-variable and three-variable linear systems, to do single-variable substitution, and to judge consistency.</p>
+        <p>Sharply split. <strong>Substitution is perfect:</strong> given <code>x + y = 10</code> and <code>x = 6</code>, the model infers <code>y = 4</code> at 1.0, and likewise for the <code>y = 6</code> variant — so it correctly tracks <em>which</em> variable is being substituted. <strong>But solving a full 2×2 system is ≈ 0.04</strong> (and 3×3 is ≈ 0.005), and it is 0.0 on the no-solution and infinite-solution cases. The model can apply one constraint to one variable; it cannot hold two constraints simultaneously and combine them. The constraint/consistency probes show the individual equation structure <em>is</em> readable (consistency is decodable well above chance), but the model does not assemble a joint solution. The substitution-patching arm (E10-C) is still affected by the patching pipeline issue and is <strong>not</strong> reported as causal.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e10_A_systems.png" alt="Systems of equations accuracy">
+        <p class="cap"><span class="figno">Fig 18</span> <b>E10-A · Systems.</b> Accuracy by system type. The high substitution bars against the near-zero 2×2/3×3 bars are the finding: one constraint at a time, no simultaneous solving.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e10B_constraint_probes.png" alt="Constraint probes">
+        <p class="cap"><span class="figno">Fig 19</span> <b>E10-B · Constraint probes.</b> Probes for coefficients, variables, RHS, and system consistency vs. layer. The structure is individually decodable — the failure is in combining, not in reading.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E11 ===================== -->
+  <section id="e11">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">12</div><h2>Symbolic simplification and path dependence</h2></div>
+      <div class="narrow prose">
+        <p>I gave the model multi-step simplification tasks with several valid paths (<code>2(x+3)+4x</code>, <code>(x+2)² − (x²+4x)</code>, fraction combining) and asked whether it reaches the same simplified result regardless of path, and how deep it can go.</p>
+        <p>Again the biased scorer distorted the first read, and the SymPy re-score corrects it in both directions. <strong>Upward:</strong> binomial-difference simplification is <strong>1.0</strong> (the model correctly returns the constant, e.g. <code>(x+4)² − (x²+8x) = 16</code>; the old scorer compared against an unexpanded reference string and scored it 0). <strong>Downward:</strong> fraction combining is <strong>0.17</strong>, not 1.0 — the old scorer gave credit because the wrong answer <code>x/2</code> contains the right substring <code>x</code>. The honest multi-step picture: the model is perfect at a clean one-step reduction, but drops to 0.08–0.63 as the task requires expanding <em>and</em> combining, or combining fractions. Path-dependence analysis shows it does not reliably converge to a single canonical simplified form across equivalent routes.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e11C_path_dependence.png" alt="Path dependence in simplification">
+        <p class="cap"><span class="figno">Fig 20</span> <b>E11-C · Path dependence.</b> Trajectories across alternative simplification paths. The lack of convergence to a shared simplified-state representation (and the SymPy-corrected per-kind accuracies) show the model executes steps but does not robustly reduce multi-step expressions.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Corrected numbers (SymPy):</strong> binomial-diff <strong>1.0</strong> · deep-2-step 0.63 · expand+combine 0.46 · two-expansions 0.21 · <strong>frac-combine 0.17</strong> · mixed multi-step 0.08. The old column (binomial-diff 0.0, frac-combine 1.0) is a scorer artifact and is superseded.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E12 ===================== -->
+  <section id="e12">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">13</div><h2>Syntax vs. mathematical meaning</h2></div>
+      <div class="narrow prose">
+        <p>I built expression pairs across four categories — same syntax/same meaning, different syntax/same meaning, same syntax/different meaning, different syntax/different meaning — and asked whether the model separates <em>syntactic structure</em> from <em>mathematical meaning</em> into distinguishable representational axes.</p>
+        <p>The behavioural result is clean: the model separates all four categories at <strong>1.0</strong>. The representational analysis shows the syntax and semantics axes are <strong>low-overlap (≈ 0.09) and independently decodable</strong> (evaluated value at R² ≈ 0.999 by L24) — so the model does maintain a syntax representation and a meaning/value representation that are largely distinct, rather than one entangled blob. The causal-separation arm (intervene on one axis while holding the other) is the one that did not run cleanly and is reported as inconclusive. Net: the model distinguishes structure from meaning, and the two live in separable directions.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e12A_two_axes.png" alt="Syntax vs semantics axes">
+        <p class="cap"><span class="figno">Fig 21</span> <b>E12-A · Two axes.</b> Decodability of the syntax axis vs. the semantic/value axis across layers, with their subspace overlap. The two rising, low-overlap curves are the finding: separable structure and meaning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART IV ===================== -->
+  <div class="part-label">Part IV — Rules vs. templates</div>
+
+  <!-- ===================== E13 ===================== -->
+  <section id="e13">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">14</div><h2>Does the model maintain intermediate computational states?</h2></div>
+      <div class="narrow prose">
+        <p>For <code>(12×5)+18</code>, does the model construct a representation of the intermediate <code>60</code> before computing <code>78</code> — or go straight to the answer? I built problems of depth 1–4 and probed for each intermediate result and the final result at every layer.</p>
+        <p>Here the two legs disagree, and the disagreement is the story. <strong>Probes:</strong> the first intermediate result is decodable at high R² (0.93–0.99) at <em>every</em> depth, and so is the final result — so the model does maintain readable intermediate states, even at depth 4. <strong>Behaviour:</strong> actual accuracy collapses with depth — 1.0 (depth 1) → 0.81 (depth 2) → 0.30 (depth 3) → 0.15 (depth 4). So the model <em>has</em> the intermediate states internally but <em>fails to use them reliably</em> as depth grows. The intermediate-state patching arm (E13-B) is still affected by the patching pipeline issue and is not reported. This is the clearest instance in the study of "decodable but not behaviorally effective."</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e13_A_intermediate.png" alt="Intermediate state decodability by depth">
+        <p class="cap"><span class="figno">Fig 22</span> <b>E13-A · Intermediate states.</b> R² for the first intermediate and final result vs. layer, by computational depth. All curves reach high R² — the intermediates are present in the residual stream at every depth.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e13_C_depth.png" alt="Depth vs accuracy">
+        <p class="cap"><span class="figno">Fig 23</span> <b>E13-C · Depth vs. accuracy.</b> Behavioural accuracy vs. number of operations. The steep collapse (1.0 → 0.15) alongside the high decodability above is the key tension: the states are there but not harnessed as depth increases.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E14 ===================== -->
+  <section id="e14">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">15</div><h2>Is an operation a reusable, operand-independent transformation?</h2></div>
+      <div class="narrow prose">
+        <p>Is "multiplication" represented as a reusable transformation that can take any operands — or as a set of operand-specific associations? I probed the operator token across many operand pairs for stability, and causally swapped the operator.</p>
+        <p>The operator identity is <strong>perfectly decodable (1.0) in every layer</strong> and is stable across operands — so the model has an operand-independent <em>representation</em> of the operation. The causal picture is more tentative than the representation. In E4-C, patching the operator token's state from a multiplication run into a matched addition run flips the answer <strong>2/2 at L24</strong> (0/2 at L16, 0/2 at L31) — a localized causal effect. But the independent E14-B re-run of the same operator-swap, tested across L12/L20/L28/L31, found <strong>0 flips at every layer</strong>: the addition answer (15) persists even with the multiplication operator state patched in. So the honest read is that the operator's functional role is <em>not robustly carried by its token-position residual state</em> — it may be re-derived from the input embeddings at later layers, or distributed across other positions. I therefore treat "operations as reusable transformations" as <strong>supported at the representation level (probe 1.0, operand-invariant) but only weakly, non-reproduced at the causal level</strong>. I do not claim the cross-operand generalization of a learned operator transform; that is the stronger claim the evidence does not establish.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e14_A_operator.png" alt="Operator probe across operands">
+        <p class="cap"><span class="figno">Fig 24</span> <b>E14-A · Operator probe.</b> Operator-identity probe accuracy vs. layer, pooled across operand pairs. A flat 1.0 curve shows the operation is represented independently of the specific operands.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e01D_operator_swap.png" alt="Operator swap causal patching across layers">
+        <p class="cap"><span class="figno">Fig 25</span> <b>E14-B · Operator swap.</b> Operator-swap patching: whether the answer flips, by layer (E14-B re-run, tested at L12/L20/L28/L31). <strong>Result: 0 flips at every layer</strong> — the addition answer persists even with the multiplication operator state patched in. This is a genuine null, in tension with E4-C's localized 2/2 flip at L24 for the same conceptual patch. I report both, and the conservative reading is that the operator's causal role is not robustly localized to its token-position state.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Causal (E14-B):</strong> operator-swap patch is <strong>0 flips at every tested layer (L12/L20/L28/L31)</strong> — a genuine null. E4-C's operator arm showed a localized 2/2 flip at L24, which this independent re-run did <em>not</em> reproduce. I therefore do <em>not</em> claim the operator is as causally load-bearing as the operand (E4-C) or the intermediate equation state (E7-C). non-reproduced / null</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== E15 ===================== -->
+  <section id="e15">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">16</div><h2>The logit lens: how the answer develops through the layers</h2></div>
+      <div class="narrow prose">
+        <p>I applied the unembedding to the residual stream at every layer and tracked (A) the probability of the correct answer, (B) the top-1 predicted token, and (C) a teacher-forced sequence score of the full answer, for arithmetic and algebra problems of increasing difficulty.</p>
+        <p>Two findings. <strong>First, the answer emerges late.</strong> The correct-answer probability is low in early layers and only reaches 0.9–1.0 in the late layers (L24–31), and harder problems form their answer later. This matches the probe layer-profiles (information constructed through the network) and the causal result (interventions only work at L24/L31) — three independent methods agreeing that the computational state is assembled late. <strong>Second, the teacher-forced sequence score (fixed) is 0.99–0.999 for correct answers</strong> and 0.026 for the hardest equation — a clean signal that the model assigns near-certain probability to the answer it will generate, and that the raw layer-wise lens under-reads multi-digit answers (a known artifact of applying the final unembedding to intermediate, un-normalized states). I report the lens as a <em>trajectory</em> tool, not as the model's actual decoding path.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e15.png" alt="Correct answer probability across layers">
+        <p class="cap"><span class="figno">Fig 26</span> <b>E15 · Answer probability.</b> Correct-answer probability vs. layer for problems of increasing difficulty. The late rise, and the rightward shift with difficulty, is the "answer forms late, harder = later" signal.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e15_top1.png" alt="Top predicted token per layer">
+        <p class="cap"><span class="figno">Fig 27</span> <b>E15-top1 · Top token.</b> The top-1 token at each layer. Early layers are noisy (this is the raw-lens artifact); the stable answer token appears only in the late layers.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e15_teacherforced.png" alt="Teacher-forced sequence score">
+        <p class="cap"><span class="figno">Fig 28</span> <b>E15-teacher-forced · Sequence score.</b> Whole-answer sequence log-probability (fixed off-by-one). 0.99–0.999 for correct answers confirms the model is confident in the answer it will emit, independent of the raw-lens read-off.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART V ===================== -->
+  <div class="part-label">Part V — The core question</div>
+
+  <!-- ===================== E16 ===================== -->
+  <section id="e16">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">17</div><h2>Does the model implement rules, or memorize templates?</h2></div>
+      <div class="narrow prose">
+        <p>This is the most fundamental question in the algebra investigation, and the most sobering result in the study. I evaluated the model on held-out distributions that isolate what is being generalised over: same structure/new coefficients, new variable names, unseen equation structures, greater transformation depth, unfamiliar compositions, and a <em>brand-new</em> operation <code>a ⋆ b = 2a + b</code> that the model has never seen.</p>
+        <p>The pattern is a clean dissociation between <em>symbol-invariance</em> and <em>value/structure-invariance</em>:</p>
+      </div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>Split</th><th class="num">Accuracy</th><th>What it tests</th><th>Reading</th></tr></thead>
+          <tbody>
+            <tr><td>In-distribution</td><td class="num">0.58</td><td>familiar structure &amp; coefficients</td><td>moderate baseline</td></tr>
+            <tr><td class="strong">Variable OOD</td><td class="num strong">0.56</td><td>new variable <em>names</em></td><td>near-IID → robust to renaming</td></tr>
+            <tr><td>Novel op, 1-step</td><td class="num">0.63</td><td>new <em>operation</em>, single application</td><td>can apply a freshly-supplied rule once</td></tr>
+            <tr><td class="weak">Coefficient OOD</td><td class="num weak">0.03</td><td>new <em>numbers</em></td><td>collapses — anchored to training values</td></tr>
+            <tr><td class="weak">Structure OOD</td><td class="num weak">0.16</td><td>unseen <em>equation form</em></td><td>collapses — template-bound</td></tr>
+            <tr><td class="weak">Composition OOD</td><td class="num weak">0.08</td><td>familiar ops, new combination</td><td>collapses — no composition</td></tr>
+            <tr><td class="weak">Depth OOD</td><td class="num weak">0.04</td><td>more transformation steps</td><td>collapses — no chaining</td></tr>
+            <tr><td class="weak">Novel op, 2-step</td><td class="num weak">0.03</td><td>new op applied <em>twice</em></td><td>collapses — can't compose the new rule</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="narrow prose">
+        <p>Read together, this is precise. The model is <strong>invariant to the surface symbols</strong> (variable names: 0.56 ≈ IID 0.58) and can <strong>apply a new rule once</strong> (novel op, 1-step: 0.63) — evidence it has some abstract, symbol-independent mechanism. But it <strong>collapses the moment the task demands new numbers, a new structure, a new composition, or a second step</strong> (all ≤ 0.16). The strongest single conclusion of the whole study: <span class="hl"><strong>Qwen3.5-4B's mathematical competence is template- and value-anchored, not a reusable algorithm.</strong></span> It can follow a rule it has seen (or been given) for one step on familiar numbers; it cannot generalize the rule to new coefficients, new forms, or to composition. This is the mechanistic signature of pattern-matching with shallow abstraction, not of algebraic reasoning.</p>
+      </div>
+
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e16_A_ood.png" alt="Out-of-distribution generalization">
+        <p class="cap"><span class="figno">Fig 29</span> <b>E16-A · OOD splits.</b> Accuracy by OOD split. The near-IID bar for variable names against the collapsed bars for coefficients/structure/depth/composition is the dissociation: symbol-invariant but not value- or structure-invariant.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/e16_C_star.png" alt="Novel operation generalization">
+        <p class="cap"><span class="figno">Fig 30</span> <b>E16-C · Novel operation.</b> Performance on the novel operation <code>a ⋆ b = 2a+b</code> as the number of applications increases. ~0.63 for one application, ~0.03 for two — it can use a new rule once but cannot compose it.</p>
+      </div>
+      <div class="figure">
+        <img src="/portfolio/content/posts/number-comp/S2_e16_rules.png" alt="Rules vs templates summary">
+        <p class="cap"><span class="figno">Fig 31</span> <b>E16 summary · Rules vs. templates.</b> The full rules-vs-templates result in one panel: which generalization axes hold and which collapse.</p>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted"><strong>Re-use ablation (E16-B):</strong> ablating candidate transformation components produces only small, non-selective drops — no clean "distributivity circuit" that damages both <code>3(x+2)</code> and <code>5(y+7)</code>. Consistent with the behavioural finding: the transformations are not implemented as a reusable, localizable mechanism.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PART VI ===================== -->
+  <div class="part-label">Part VI — Causal synthesis</div>
+
+  <!-- ===================== CAUSAL ===================== -->
+  <section id="causal">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">18</div><h2>What the causal interventions collectively show</h2></div>
+      <div class="narrow prose">
+        <p>Across the study I ran activation-patching and ablation at three depths. The priority patching experiments show a <strong>consistent, localised signal</strong>, although not every intervention is conclusive. The table summarizes the results:</p>
+      </div>
+      <div class="tablewrap">
+        <table class="tbl">
+          <thead><tr><th>Intervention</th><th>What is patched</th><th class="num">L16 (early)</th><th class="num">L24 (mid-late)</th><th class="num">L31 (late)</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td>E4-C operand arm</td><td>second-operand state</td><td class="num">0/2</td><td class="num"><strong>2/2 flip</strong></td><td class="num">1/2</td><td>effective @ L24</td></tr>
+            <tr><td>E4-C operator arm</td><td>operator token state</td><td class="num">0/2</td><td class="num"><strong>2/2 flip</strong></td><td class="num">0/2</td><td>effective @ L24 only — see E14-B</td></tr>
+            <tr><td>E7-C reduced constant</td><td>intermediate equation state</td><td class="num">0/2</td><td class="num">1/2</td><td class="num"><strong>2/2 flip</strong></td><td>effective @ L31</td></tr>
+            <tr><td>E9-B transformation selection</td><td>next-inverse-op state</td><td class="num">0/2</td><td class="num"><strong>2/2 flip</strong></td><td class="num"><strong>2/2 flip</strong></td><td>effective @ L24/L31</td></tr>
+            <tr><td>E6-C value identity</td><td>assigned variable value</td><td class="num">0/2</td><td class="num">1/2</td><td class="num">1/2</td><td>partial</td></tr>
+            <tr><td>E14-B operator swap <em>(independent re-run)</em></td><td>operator token state, L12/L20/L28/L31</td><td colspan="3" class="num">0/2 at every layer</td><td>null — did not reproduce E4-C's L24</td></tr>
+            <tr><td>E10-C substitution</td><td>substitution state</td><td colspan="3" class="small muted">base runs unparseable (answer = None) — not interpretable</td><td>inconclusive</td></tr>
+            <tr><td>E13-B intermediate state</td><td>intermediate result state</td><td colspan="3" class="small muted">patched runs did not produce interpretable answers</td><td>inconclusive</td></tr>
+            <tr><td>E12-D causal separation</td><td>syntax / semantic axis</td><td colspan="3" class="small muted">base runs unparseable (answer = None) — not interpretable</td><td>inconclusive</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="narrow prose">
+        <p class="small muted">Reading the two operator rows together: E4-C's operator arm shows a <em>localised</em> 2/2 flip at L24 (0/2 at L16 and L31), but the independent E14-B re-run of the same operator-swap found 0 flips across L12/L20/L28/L31. I treat the operator's causal role as <strong>weak and non-reproduced</strong>, in contrast to the operand (E4-C) and intermediate-state (E7-C, E9-B) arms, which are the clean, late-layer causal effects.</p>
+        <p>Three conclusions follow. <strong>(1) The computational state is assembled late.</strong> Every intervention that works does so at L24 or L31; none works at L16. This is the causal corollary of the probe layer-profiles (Section 2, 5, 8, 10) and the logit-lens late emergence (Section 16): the quantities that matter are <em>constructed</em> in the mid–late network, not read off the input. <strong>(2) The clean, effective interventions are the single-step, template-bound quantities</strong> — the second operand, one inverse-operation selection, and the intermediate equation state (reduced constant). The operator's own token-state is the notable exception: its causal effect is localised to L24 in E4-C and did not reproduce in the independent E14-B re-run, so I do not rank it with the clean arms. The interventions that are partial or inconclusive are exactly the multi-step / compositional ones — variable reassignment, substitution, chained intermediates. <strong>(3) Together, these results suggest a consistent picture:</strong> the model builds a strong, causally-real, <em>single-step</em> computational state in its late layers, and that state is what it is good at; it does not build (or cannot harness) the compositional state that deeper mathematics requires.</p>
+      </div>
+
+      <div class="card good">
+        <h4>Consistent causal finding</h4>
+        <p>Patching at early layers (L16) has <strong>no effect</strong>. Patching at mid–late layers (L24/L31) <strong>causally transfers</strong> the second operand, the intermediate equation constant, and the transformation-selection state. This localisation — late layers carry the causally-effective computational state — is replicated across the three clean arms (E4-C operand, E7-C, E9-B). The operator-swap arm (E4-C / E14-B) is the exception: a localised L24 effect that did not reproduce, which I report honestly rather than folding into the "consistent" finding.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SYNTHESIS ===================== -->
+  <div class="part-label">Synthesis</div>
+
+  <section id="synth">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">19</div><h2>What the evidence supports</h2></div>
+      <div class="narrow prose">
+        <p><strong>Real — the model has genuine, causally-effective single-step computation.</strong> It decodes operands, operators, and results at ≈ 0.99; it constructs intermediate equation states (reduced constant R² 0.98) and inverse-operation selections (1.0) that are <em>causally load-bearing at L24/L31</em>; it is perfect at expansion, factorization, and single-step simplification (SymPy-verified); it binds variables to values in a renaming-invariant way (R² 0.997); and it separates syntax from meaning into distinct, decodable axes. The causal interventions support the conclusion that these representations contribute to the model's outputs.</p>
+        <p><strong>Not real (or not reliable) — composition and generalization.</strong> The model does <em>not</em> compose: accuracy collapses from depth 1 to depth 4 (1.0 → 0.15), from one inverse step to two (0.46 → 0.23), and from one application of a novel rule to two (0.63 → 0.03). It does <em>not</em> generalize: new coefficients (0.03), new structures (0.16), new compositions (0.08), and systems of equations (2×2 0.04, 3×3 0.005) all collapse, even though the constituent single-step operations are strong. It does <em>not</em> robustly track variable reassignment (0.22) or state equivalence judgments (0/300), even though the underlying knowledge is decodable.</p>
+        <p><strong>In brief.</strong> Qwen3.5-4B is a strong, causally-grounded <em>single-step</em> mathematical operator whose competence is anchored to familiar templates and values; it builds the right intermediate states in its late layers and uses them for one step, but it lacks the compositional, value-independent mechanism that would make it an algebraic reasoner. Its mathematics is <span class="hl"><strong>effective on familiar single-step tasks, but limited on composition and generalization</strong></span> — and those two facts are the same fact, measured with three independent methods (probing, causality, behaviour) that all agree.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LIMITS ===================== -->
+  <section id="limits">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">20</div><h2>Limitations &amp; caveats</h2></div>
+      <div class="narrow prose">
+        <ul>
+          <li><strong>Symbolic scoring.</strong> I use SymPy equivalence for symbolic answers, so valid expressions are compared by meaning rather than exact formatting.</li>
+          <li><strong>Some causal arms are inconclusive.</strong> E14-B (operator swap) produced 0 flips at every tested layer, a null result. E10-C and E12-D could not be scored because the base answers were unparseable; E13-B did not produce an interpretable patched answer; and E1-Dpatch is excluded because it yielded no usable result. I do not treat these inconclusive arms as evidence that the corresponding computation is absent.</li>
+          <li><strong>Whole-vector patching</strong> transfers many correlated properties at once. The cleanest claims are the directional ones (late layers effective, early not); a fully subspace-restricted patch would be the stronger confirmation and is future work.</li>
+          <li><strong>Single model, single scale.</strong> Nothing here is claimed to transfer to other models or to Qwen3.5 at other sizes without re-running. The 2560-dim residual and 32-layer depth are part of the result.</li>
+          <li><strong>Probe splits</strong> are value/structure-based, not random, to prevent memorization; but a linear probe is still only evidence of <em>linear</em> accessibility, not of the full representation.</li>
+          <li><strong>Relational-similarity metrics</strong> (E4-B, E5-A) use a squared-distance form that does not cleanly separate shared-operand from shared-result; I report them as inconclusive.</li>
+          <li><strong>The logit lens</strong> (E15) reads the final unembedding onto intermediate, un-normalized states; it is a trajectory tool, not the model's actual decoding path, and under-reads multi-digit answers. I use the teacher-forced score as the more reliable confidence measure.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REFERENCES ===================== -->
+  <section id="references" class="references">
+    <div class="wrap">
+      <div class="sec-head"><div class="sec-num">21</div><h2>References</h2></div>
+      <div class="narrow prose">
+        <ol>
+          <li>AlQuabeh, H. et al. “<a href="https://arxiv.org/abs/2502.16147">Number Representations in LLMs: A Computational Parallel to Human Perception</a>.” arXiv:2502.16147, 2025.</li>
+          <li>Quirke, P., Neo, C., and Barez, F. “<a href="https://arxiv.org/abs/2402.02619">Arithmetic in Transformers Explained</a>.” arXiv:2402.02619, 2024.</li>
+          <li>Stolfo, A., Belinkov, Y., and Sachan, M. “<a href="https://arxiv.org/abs/2305.15054">A Mechanistic Interpretation of Arithmetic Reasoning in Language Models using Causal Mediation Analysis</a>.” arXiv:2305.15054, 2023.</li>
+          <li>Belinkov, Y. “<a href="https://arxiv.org/abs/2102.12452">Probing Classifiers: Promises, Shortcomings, and Advances</a>.” Computational Linguistics, 2022.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
